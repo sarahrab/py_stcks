@@ -11,5 +11,5 @@ class UserFundsView(View):
         user = cast(UserAccount, self.data)
         if user:
             print(f"{user.name} funds:")
-            print(f"    Available: {user.amount}")
-            print(f"    In stock: {user.stocks.get_stocks_value()}")
+            print(f"    Available   : {user.amount}")
+            print(f"    Stock Value : {user.stocks.get_stocks_value()}")

@@ -3,12 +3,13 @@ import sys
 from basics import View, MenuAction
 from typing import cast
 
-from stcks import Stocks
+from stocks import Stocks
 from users import UserManager
 
 
 class ViewManager:
     views = {}
+    views_stack = []
 
     @classmethod
     def add_view(cls, view: View):
@@ -21,11 +22,23 @@ class ViewManager:
         v = cls.views.get(name, None)
         if v is not None:
             view = cast(View, v)
-            view.data = data
+            if data is not None:
+                view.data = data
+            cls.views_stack.append(name)
+            print()
             view.show()
             view.show_menu()
             return True
         return False
+
+    @classmethod
+    def switch_back(cls, data: object | None = None) -> bool:
+        if len(cls.views_stack) > 1:
+            cls.views_stack.pop()
+            prev = cls.views_stack.pop()
+            return cls.switch_view(prev, None)
+        return False
+
 
 
 # class OperationalLogic(object):

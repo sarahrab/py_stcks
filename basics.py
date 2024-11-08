@@ -60,5 +60,6 @@ class View:
         pass
 
     def show_menu(self):
+        print()
         if self.menu is not None:
             self.menu.run(self.data)

@@ -1,4 +1,4 @@
-from stcks import Stocks
+from stocks import Stocks
 
 class User:
     def __init__(self, name, password, amount: int = 0):
@@ -18,7 +18,7 @@ class UserManager:
 
     def find(self, name: str, password: str | None = None) -> UserAccount | None:
         for user in self.users:
-            if user.name == name and (password == None or user.password == password):
+            if user.name == name and (password is None or user.password == password):
                 return user
         return None
 

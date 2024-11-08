@@ -12,4 +12,5 @@ class UserStocksView(View):
         if user:
             print(f"{user.name} stocks:")
             for stock in user.stocks.stocks:
-                print(stock.to_string())
+                print("  " + stock.to_string())
+            print(f"Total in stocks: {user.stocks.get_stocks_value()}")

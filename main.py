@@ -6,7 +6,7 @@ from Views.WelcomeView import WelcomeView
 from Views.MainUserView import MainUserView
 from Views.BuyingView import BuyingView
 from Views.SellingView import SellingView
-from Views.TransactionView import TransactionView
+from Views.TransactionSummaryView import TransactionSummaryView
 from basics import MenuItem, Menu
 from actions import *
 
@@ -34,26 +34,32 @@ def init_views():
     menu_user = Menu("u")
     menu_user.add_item(MenuItem("1", "Check Funds", SwitchViewAction("user_funds")))
     menu_user.add_item(MenuItem("2", "Check Stock", SwitchViewAction("user_stocks")))
-    menu_user.add_item(MenuItem("3", "Buy", SwitchViewAction("buy")))
-    menu_user.add_item(MenuItem("4", "Sell", SwitchViewAction("sell")))
+    menu_user.add_item(MenuItem("3", "Buy", StartTransactionAction("buy", True)))
+    menu_user.add_item(MenuItem("4", "Sell", StartTransactionAction("sell", False)))
     menu_user.add_item(MenuItem("5", "Logout", SwitchViewAction("welcome")))
     userView = MainUserView("user_main", menu_user)
     ViewManager.add_view(userView)
 
     menu_funds = Menu("f")
-    menu_funds.add_item(MenuItem("1", "Back", SwitchViewAction("user_main")))
+    menu_funds.add_item(MenuItem("1", "Back", SwitchBackAction()))
 
     userFundsView = UserFundsView("user_funds", menu_funds)
     ViewManager.add_view(userFundsView)
     userStocksView = UserStocksView("user_stocks", menu_funds)
     ViewManager.add_view(userStocksView)
 
-    menu_buy= Model.stocks.make_menu()
-    menu_buy.add_item(MenuItem(f"{menu_buy.count() + 1}", "Back", SwitchViewAction("user_main")))
-    buyingView= BuyingView("buy", menu_buy)
+    buyingView = BuyingView("buy")
     ViewManager.add_view(buyingView)
 
-    trans_view= TransactionView
+    sellingView = SellingView("sell")
+    ViewManager.add_view(sellingView)
+
+    menu_trans = Menu("tr")
+    menu_trans.add_item(MenuItem("1", "Submit", RegisterAction("exec_trans")))
+    menu_trans.add_item(MenuItem("2", "Cancel", SwitchBackAction()))
+    trans_view= TransactionSummaryView("trans", menu_trans)
+    ViewManager.add_view(trans_view)
+
 
 if __name__ == '__main__':
     init_views()

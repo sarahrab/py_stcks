@@ -1,7 +1,7 @@
 from basics import *
 from typing import cast
 
-from stcks import Stock
+from stocks import Stock
 from users import *
 
 class MainUserView(View):
