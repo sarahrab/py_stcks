@@ -1,6 +1,10 @@
+import yaml
+
 from ViewManager import Model
+from YamlLoader import YamlLoader
 from basics import *
 from stocks import Stock
+from users import UserAccount
 
 
 class WelcomeView(View):
@@ -9,9 +13,12 @@ class WelcomeView(View):
 
     def show(self):
         print("Welcome, friend!")
-        for x in range(6):
-            Model.stocks.add(Stock(f"Company {x + 1}", x + 2, (x + 1) * 20))
+        # st = YamlLoader.deserialize_stocks("D:\\python\\py_stcks\\db\\stocks2.yaml")
+        # for x in range(6):
+        #     Model.stocks.add(Stock(agency=f"Company {x + 1}", price=x + 2, count=(x + 1) * 20))
+        # YamlLoader.serialize_stocks(Model.stocks, "D:\\python\\py_stcks\\db\\stocks2.yaml")
 
-
-
-
+        u = UserAccount(name = "User1", password = "kjkj", amount = 9199)
+        d = u.model_dump()
+        s = yaml.dump(d)
+        print(s)

@@ -1,3 +1,4 @@
+from YamlLoader import YamlLoader
 from basics import MenuAction
 from ViewManager import ViewManager, Model, Transaction
 from typing import cast
@@ -46,6 +47,7 @@ class LoginAction(MenuAction):
                 user.logged_in = True
                 self.result = user
                 ViewManager.switch_view(self.view_name, self.result)
+                YamlLoader.serialize_users(Model.users)
             else:
                 print("Unknown user. Please try again.")
                 ViewManager.switch_view("login", self.result)
@@ -112,7 +114,9 @@ class TransactionExecuteAction(MenuAction):
         if not Model.stocks.remove(transaction.stock.agency, transaction.count):
             transaction.error_msg = "stock BAD"
             return
-        transaction.user.stocks.add(Stock(transaction.stock.agency, transaction.stock.price, transaction.count))
+        transaction.user.stocks.add(Stock(agency = transaction.stock.agency,
+                                          price = transaction.stock.price,
+                                          count = transaction.count))
         transaction.user.amount -= transaction.stock.price * transaction.count
         transaction.error_msg = "success!!!!"
 
@@ -120,7 +124,9 @@ class TransactionExecuteAction(MenuAction):
         if not transaction.user.stocks.remove(transaction.stock.agency, transaction.count):
             transaction.error_msg = "stock BAD"
             return
-        Model.stocks.add(Stock(transaction.stock.agency, transaction.stock.price, transaction.count))
+        Model.stocks.add(Stock(agency = transaction.stock.agency,
+                               price = transaction.stock.price,
+                               count = transaction.count))
         transaction.user.amount += transaction.stock.price * transaction.count
         transaction.error_msg = "success!!!!"
 

@@ -1,4 +1,5 @@
-from ViewManager import Transaction
+from ViewManager import Transaction, Model
+from YamlLoader import YamlLoader
 from basics import *
 from typing import cast
 
@@ -20,4 +21,5 @@ class MainUserView(View):
 
         if user is not None:
             print(f"Hello again, {user.name}!")
-            user.stocks.add(Stock("nayax", 25, 10))  # test only
+            user.stocks.add(Stock(agency = "nayax", price = 25, count = 10))  # test only
+            #YamlLoader.serialize_users(Model.users, "D:\\python\\py_stcks\\db\\users.yaml")

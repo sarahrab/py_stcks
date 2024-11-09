@@ -1,20 +1,37 @@
-from stocks import Stocks
+from typing import List
+from pydantic import BaseModel
 
-class User:
-    def __init__(self, name, password, amount: int = 0):
-        self.name = name
-        self.password = password
-        self.amount = amount
+from stocks import Stocks, Stock
+
+
+class User(BaseModel):
+    name: str
+    password: str
+    amount: int
+
+    # def __init__(self, name, password, amount: int = 0):
+    #     self.name = name
+    #     self.password = password
+    #     self.amount = amount
+
 
 class UserAccount(User):
-    def __init__(self, name, password, amount: int = 0):
-        super().__init__(name, password, amount)
-        self.loggedIn = False
-        self.stocks = Stocks()
+    name: str
+    password: str
+    amount: int
+    logged_in: bool = False
+    stocks: Stocks = Stocks()
 
-class UserManager:
-    def __init__(self):
-        self.users = []
+    # def __init__(self, name, password, amount: int = 0):
+    #     super().__init__(name, password, amount)
+    #     self.loggedIn = False
+    #     self.stocks = Stocks()
+
+
+class UserManager(BaseModel):
+    users: List[UserAccount] = []
+    # def __init__(self):
+    #     self.users = []
 
     def find(self, name: str, password: str | None = None) -> UserAccount | None:
         for user in self.users:
@@ -25,7 +42,7 @@ class UserManager:
     def add(self, name: str, password: str, amount: int) -> UserAccount | None:
         user = self.find(name, password)
         if user is None:
-            user = UserAccount(name, password, amount)
+            user = UserAccount(name= name, password= password, amount= amount)
             self.users.append(user)
         return user
 
@@ -37,4 +54,3 @@ class UserManager:
                 self.users.remove(user)
                 return True
         return False
-

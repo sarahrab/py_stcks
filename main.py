@@ -9,11 +9,18 @@ from Views.MainUserView import MainUserView
 from Views.BuyingView import BuyingView
 from Views.SellingView import SellingView
 from Views.TransactionSummaryView import TransactionSummaryView
+from YamlLoader import YamlLoader
 from basics import MenuItem, Menu
 from actions import *
+from dotenv import load_dotenv
+import os
 
 
 def init_views():
+    load_dotenv()
+    Model.users_db = os.getenv('USERS_DB_FILE')
+    Model.stocks_db = os.getenv('STOCKS_DB_FILE')
+
     menu_welcome = Menu("w")
     menu_welcome.add_item(MenuItem("1", "Login", SwitchViewAction("login")))
     menu_welcome.add_item(MenuItem("2", "Register", SwitchViewAction("regUser")))
@@ -59,20 +66,25 @@ def init_views():
     menu_count = Menu("sc")
     menu_count.add_item(MenuItem("1", "Submit", SwitchViewAction("trans")))
     menu_count.add_item(MenuItem("2", "Cancel", SwitchBackAction()))
-    sc= StockCountView("sc", menu_count)
+    sc = StockCountView("sc", menu_count)
     ViewManager.add_view(sc)
 
     menu_trans = Menu("tr")
     menu_trans.add_item(MenuItem("1", "Submit", TransactionExecuteAction("result")))
     menu_trans.add_item(MenuItem("2", "Cancel", SwitchBackAction()))
-    trans_view= TransactionSummaryView("trans", menu_trans)
+    trans_view = TransactionSummaryView("trans", menu_trans)
     ViewManager.add_view(trans_view)
 
-    menu_result= Menu("r")
+    menu_result = Menu("r")
     menu_result.add_item(MenuItem("1", "Continue", CloseTransactionAction("user_main")))
-    result_view= TransactionResultView("result", menu_result)
+    result_view = TransactionResultView("result", menu_result)
     ViewManager.add_view(result_view)
+
 
 if __name__ == '__main__':
     init_views()
+
+    Model.stocks = YamlLoader.deserialize_stocks(Model.stocks_db)
+    Model.users = YamlLoader.deserialize_users(Model.users_db)
+
     ViewManager.switch_view("welcome")

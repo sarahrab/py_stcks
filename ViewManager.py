@@ -43,6 +43,8 @@ class ViewManager:
 class Model:
     stocks = Stocks()
     users = UserManager()
+    stocks_db = ''
+    users_db = ''
 
 
 class Transaction:
