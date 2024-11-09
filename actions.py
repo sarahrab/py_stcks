@@ -105,6 +105,7 @@ class TransactionExecuteAction(MenuAction):
                 self.execute_buy(transaction)
             else:
                 self.execute_sell(transaction)
+            self.result= transaction
             ViewManager.switch_view(self.view_name, self.result)
 
     def execute_buy(self, transaction: Transaction):
@@ -122,3 +123,15 @@ class TransactionExecuteAction(MenuAction):
         Model.stocks.add(Stock(transaction.stock.agency, transaction.stock.price, transaction.count))
         transaction.user.amount += transaction.stock.price * transaction.count
         transaction.error_msg = "success!!!!"
+
+
+class CloseTransactionAction(MenuAction):
+    def __init__(self, view_name: str, data: object | None = None):
+        super().__init__(data)
+        self.view_name = view_name
+
+    def execute(self):
+        transaction = cast(Transaction, self.data)
+        if transaction and transaction.user:
+            self.result = transaction.user
+            ViewManager.switch_view(self.view_name, self.result)

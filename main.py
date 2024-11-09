@@ -69,7 +69,7 @@ def init_views():
     ViewManager.add_view(trans_view)
 
     menu_result= Menu("r")
-    menu_result.add_item(MenuItem("1", "Continue", SwitchViewAction("user_main")))
+    menu_result.add_item(MenuItem("1", "Continue", CloseTransactionAction("user_main")))
     result_view= TransactionResultView("result", menu_result)
     ViewManager.add_view(result_view)
 
