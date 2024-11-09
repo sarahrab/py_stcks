@@ -1,7 +1,4 @@
 stocks:
-- agency: Company 1
-  count: 20
-  price: 2
 - agency: Company 2
   count: 40
   price: 3

@@ -2,6 +2,7 @@ import yaml
 
 from ViewManager import Model
 from YamlLoader import YamlLoader
+from actions import ExitViewAction, SwitchViewAction
 from basics import *
 from stocks import Stock
 from users import UserAccount
@@ -12,13 +13,12 @@ class WelcomeView(View):
         super().__init__(title, menu)
 
     def show(self):
+        self.create_menu()
         print("Welcome, friend!")
-        # st = YamlLoader.deserialize_stocks("D:\\python\\py_stcks\\db\\stocks2.yaml")
-        # for x in range(6):
-        #     Model.stocks.add(Stock(agency=f"Company {x + 1}", price=x + 2, count=(x + 1) * 20))
-        # YamlLoader.serialize_stocks(Model.stocks, "D:\\python\\py_stcks\\db\\stocks2.yaml")
 
-        u = UserAccount(name = "User1", password = "kjkj", amount = 9199)
-        d = u.model_dump()
-        s = yaml.dump(d)
-        print(s)
+
+    def create_menu(self):
+        self.menu = Menu("w")
+        self.menu.add_item(MenuItem("1", "Login", SwitchViewAction("login")))
+        self.menu.add_item(MenuItem("2", "Register", SwitchViewAction("regUser")))
+        self.menu.add_item(MenuItem("3", "Exit", ExitViewAction()))

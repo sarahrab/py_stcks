@@ -17,3 +17,30 @@ users:
     - agency: nayax
       count: 30
       price: 25
+- amount: 6785
+  logged_in: false
+  name: yoyo
+  password: yoyo01
+  stocks:
+    stocks:
+    - agency: nayax
+      count: 10
+      price: 25
+- amount: 3996
+  logged_in: true
+  name: sara
+  password: hi3
+  stocks:
+    stocks:
+    - agency: Company 1
+      count: 2
+      price: 2
+- amount: 5668
+  logged_in: false
+  name: sara
+  password: 22d
+  stocks:
+    stocks:
+    - agency: Company 1
+      count: 166
+      price: 2

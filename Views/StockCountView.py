@@ -1,4 +1,5 @@
 from ViewManager import Transaction
+from actions import SwitchViewAction, SwitchBackAction
 from basics import *
 from users import *
 from typing import cast
@@ -9,6 +10,7 @@ class StockCountView(View):
         super().__init__(title, menu)
 
     def show(self):
+        self.create_menu()
         transaction = cast(Transaction, self.data)
         if transaction and transaction.user:
             print(f"{transaction.user.name} total amount: {transaction.user.amount}")
@@ -27,7 +29,7 @@ class StockCountView(View):
                         print("amount is incorrect")
                     else:
                         valid = True
-                count = amount / transaction.stock.price
+                count = int(amount / transaction.stock.price)
                 print(f"{text} : {count} {transaction.stock.agency} for {count * transaction.stock.price}")
             else:
                 count = 0
@@ -40,7 +42,7 @@ class StockCountView(View):
                         print("not enough in possession")
                     else:
                         valid = True
-                amount = count * transaction.stock.price
+                amount = int(count * transaction.stock.price)
                 print(f"{text} : {count} {transaction.stock.agency} for {amount}")
             transaction.count = count
 
@@ -52,3 +54,9 @@ class StockCountView(View):
         except ValueError:
             print("invalid format!")
             return  0
+
+    def create_menu(self):
+        self.menu = Menu("sc")
+        self.menu.add_item(MenuItem("1", "Submit", SwitchViewAction("trans")))
+        self.menu.add_item(MenuItem("2", "Cancel", SwitchBackAction()))
+

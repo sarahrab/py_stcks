@@ -1,3 +1,4 @@
+from actions import TransactionExecuteAction, SwitchBackAction
 from basics import *
 from users import *
 from typing import cast
@@ -9,6 +10,7 @@ class TransactionSummaryView(View):
         super().__init__(title, menu)
 
     def show(self):
+        self.create_menu()
         transaction = cast(Transaction, self.data)
         if transaction:
             print(f"{transaction.user.name} current amount: {transaction.user.amount}")
@@ -16,3 +18,8 @@ class TransactionSummaryView(View):
             print(f"{text}: {transaction.stock.to_string()}")
             print(f"count: {transaction.count} for {transaction.stock.price} per stock")
             print(f"total transaction price: {transaction.stock.price * transaction.count}")
+
+    def create_menu(self):
+        self.menu = Menu("tr")
+        self.menu.add_item(MenuItem("1", "Execute", TransactionExecuteAction("result")))
+        self.menu.add_item(MenuItem("2", "Cancel", SwitchBackAction()))

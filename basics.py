@@ -63,3 +63,6 @@ class View:
         print()
         if self.menu is not None:
             self.menu.run(self.data)
+
+    def create_menu(self):
+        pass

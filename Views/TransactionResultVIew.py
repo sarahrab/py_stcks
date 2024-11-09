@@ -1,6 +1,7 @@
 from typing import cast
 
 from ViewManager import Model, Transaction
+from actions import CloseTransactionAction
 from basics import *
 from stocks import Stock
 
@@ -10,10 +11,14 @@ class TransactionResultView(View):
         super().__init__(title, menu)
 
     def show(self):
+        self.create_menu()
         transaction= cast(Transaction, self.data)
         if transaction:
             print(f"transaction result: {transaction.error_msg}")
 
+    def create_menu(self):
+        self.menu = Menu("r")
+        self.menu.add_item(MenuItem("1", "Continue", CloseTransactionAction("user_main")))
 
 
 
