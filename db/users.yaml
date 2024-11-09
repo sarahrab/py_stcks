@@ -1,0 +1,10 @@
+users:
+- amount: 5667
+  logged_in: true
+  name: rtyu
+  password: hjkl
+  stocks:
+    stocks:
+    - agency: nayax
+      count: 10
+      price: 25
