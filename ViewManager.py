@@ -40,27 +40,16 @@ class ViewManager:
         return False
 
 
-
-# class OperationalLogic(object):
-#     def __init__(self):
-#         self.stocks = Stocks()
-#         self.users = UserManager()
-#
-#     def __new__(cls):
-#         if not hasattr(cls, 'instance'):
-#             cls.instance = super(OperationalLogic, cls).__new__(cls)
-#             return cls.instance
-
-
 class Model:
     stocks = Stocks()
     users = UserManager()
 
 
-class Transaction():
+class Transaction:
     def __init__(self, is_buying: bool):
         self.user = None
         self.stock = None
         self.is_buying = is_buying
         self.count = 0
         self.price = 0
+        self.error_msg = ""

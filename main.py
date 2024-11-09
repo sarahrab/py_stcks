@@ -1,6 +1,7 @@
 from ViewManager import ViewManager, Model
 from Views.LoginView import LoginView, RegisterUserView
 from Views.StockCountView import StockCountView
+from Views.TransactionResultVIew import TransactionResultView
 from Views.UserFundsView import UserFundsView
 from Views.UserStocksView import UserStocksView
 from Views.WelcomeView import WelcomeView
@@ -67,7 +68,10 @@ def init_views():
     trans_view= TransactionSummaryView("trans", menu_trans)
     ViewManager.add_view(trans_view)
 
-
+    menu_result= Menu("r")
+    menu_result.add_item(MenuItem("1", "Continue", SwitchViewAction("user_main")))
+    result_view= TransactionResultView("result", menu_result)
+    ViewManager.add_view(result_view)
 
 if __name__ == '__main__':
     init_views()
