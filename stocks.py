@@ -21,7 +21,7 @@ class Stocks:
     def __init__(self):
         self.stocks = []
 
-    def add(self, stock):
+    def add(self, stock: Stock):
         old = self.find(stock.agency)
         if old is not None:
             old.price = stock.price
@@ -40,6 +40,15 @@ class Stocks:
         for stock in self.stocks:
             total += stock.get_cost()
         return total
+
+    def remove(self, agency: str, count: int)-> bool:
+        stock= self.find(agency)
+        if stock:
+            stock.count -= count
+            if stock.count <= 0:
+                self.stocks.remove(stock)
+            return True
+        return False
 
     def make_menu(self) -> Menu:
         id = 1

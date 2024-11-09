@@ -91,3 +91,34 @@ class SelectStockAction(MenuAction):
         if self.result:
             self.result.stock = self.stock
             ViewManager.switch_view(self.view_name, self.result)
+
+
+class TransactionExecuteAction(MenuAction):
+    def __init__(self, view_name: str, data: object | None = None):
+        super().__init__(data)
+        self.view_name = view_name
+
+    def execute(self):
+        transaction = cast(Transaction, self.data)
+        if transaction and transaction.user:
+            if transaction.is_buying:
+                self.execute_buy(transaction)
+            else:
+                self.execute_sell(transaction)
+            ViewManager.switch_view(self.view_name, self.result)
+
+    def execute_buy(self, transaction: Transaction):
+        if not Model.stocks.remove(transaction.stock.agency, transaction.count):
+            transaction.error_msg = "stock BAD"
+            return
+        transaction.user.stocks.add(Stock(transaction.stock.agency, transaction.stock.price, transaction.count))
+        transaction.user.amount -= transaction.stock.price * transaction.count
+        transaction.error_msg = "success!!!!"
+
+    def execute_sell(self, transaction: Transaction):
+        if not transaction.user.stocks.remove(transaction.stock.agency, transaction.count):
+            transaction.error_msg = "stock BAD"
+            return
+        Model.stocks.add(Stock(transaction.stock.agency, transaction.stock.price, transaction.count))
+        transaction.user.amount += transaction.stock.price * transaction.count
+        transaction.error_msg = "success!!!!"

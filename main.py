@@ -63,7 +63,7 @@ def init_views():
     ViewManager.add_view(sc)
 
     menu_trans = Menu("tr")
-    menu_trans.add_item(MenuItem("1", "Submit", SwitchViewAction("exec_trans")))
+    menu_trans.add_item(MenuItem("1", "Submit", TransactionExecuteAction("result")))
     menu_trans.add_item(MenuItem("2", "Cancel", SwitchBackAction()))
     trans_view= TransactionSummaryView("trans", menu_trans)
     ViewManager.add_view(trans_view)
