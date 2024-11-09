@@ -21,6 +21,6 @@ class BuyingView(View):
             self.menu = Menu("menu_buy")
             count = 1
             for stock in Model.stocks.stocks:
-                self.menu.add_item(MenuItem(f"{count}", stock.to_string(), SelectStockAction("trans", stock, t)))
+                self.menu.add_item(MenuItem(f"{count}", stock.to_string(), SelectStockAction("sc", stock, t)))
                 count += 1
             self.menu.add_item(MenuItem(f"{count}", "Back", SwitchBackAction(t.user)))

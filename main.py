@@ -1,5 +1,6 @@
 from ViewManager import ViewManager, Model
 from Views.LoginView import LoginView, RegisterUserView
+from Views.StockCountView import StockCountView
 from Views.UserFundsView import UserFundsView
 from Views.UserStocksView import UserStocksView
 from Views.WelcomeView import WelcomeView
@@ -54,11 +55,18 @@ def init_views():
     sellingView = SellingView("sell")
     ViewManager.add_view(sellingView)
 
+    menu_count = Menu("sc")
+    menu_count.add_item(MenuItem("1", "Submit", SwitchViewAction("trans")))
+    menu_count.add_item(MenuItem("2", "Cancel", SwitchBackAction()))
+    sc= StockCountView("sc", menu_count)
+    ViewManager.add_view(sc)
+
     menu_trans = Menu("tr")
-    menu_trans.add_item(MenuItem("1", "Submit", RegisterAction("exec_trans")))
+    menu_trans.add_item(MenuItem("1", "Submit", SwitchViewAction("exec_trans")))
     menu_trans.add_item(MenuItem("2", "Cancel", SwitchBackAction()))
     trans_view= TransactionSummaryView("trans", menu_trans)
     ViewManager.add_view(trans_view)
+
 
 
 if __name__ == '__main__':
