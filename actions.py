@@ -14,6 +14,7 @@ class SwitchViewAction(MenuAction):
     def execute(self):
         self.result = ViewManager.switch_view(self.name, self.data)
 
+
 class SwitchBackAction(MenuAction):
     def __init__(self, data: object | None = None):
         super().__init__(data)
@@ -21,6 +22,7 @@ class SwitchBackAction(MenuAction):
 
     def execute(self):
         self.result = ViewManager.switch_back(self.data)
+
 
 class ExitViewAction(MenuAction):
     def __init__(self, data: object | None = None):
