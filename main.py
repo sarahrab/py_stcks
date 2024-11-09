@@ -45,7 +45,7 @@ def init_views():
     menu_user.add_item(MenuItem("2", "Check Stock", SwitchViewAction("user_stocks")))
     menu_user.add_item(MenuItem("3", "Buy", StartTransactionAction("buy", True)))
     menu_user.add_item(MenuItem("4", "Sell", StartTransactionAction("sell", False)))
-    menu_user.add_item(MenuItem("5", "Logout", SwitchViewAction("welcome")))
+    menu_user.add_item(MenuItem("5", "Logout", LogoutAction("welcome")))
     userView = MainUserView("user_main", menu_user)
     ViewManager.add_view(userView)
 

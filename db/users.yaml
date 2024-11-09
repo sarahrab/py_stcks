@@ -8,3 +8,12 @@ users:
     - agency: nayax
       count: 10
       price: 25
+- amount: 3777
+  logged_in: false
+  name: ququ
+  password: qre
+  stocks:
+    stocks:
+    - agency: nayax
+      count: 30
+      price: 25

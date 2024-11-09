@@ -46,8 +46,8 @@ class LoginAction(MenuAction):
             if user is not None:
                 user.logged_in = True
                 self.result = user
+                YamlLoader.serialize_users(Model.users, Model.users_db)
                 ViewManager.switch_view(self.view_name, self.result)
-                YamlLoader.serialize_users(Model.users)
             else:
                 print("Unknown user. Please try again.")
                 ViewManager.switch_view("login", self.result)
@@ -65,7 +65,21 @@ class RegisterAction(MenuAction):
             user = Model.users.add(reg_user.name, reg_user.password, reg_user.amount)
             user.logged_in = True
             self.result = user
+            YamlLoader.serialize_users(Model.users, Model.users_db)
             ViewManager.switch_view(self.view_name, self.result)
+
+
+class LogoutAction(MenuAction):
+    def __init__(self, view_name, data: object | None = None):
+        super().__init__(data)
+        self.view_name = view_name
+
+    def execute(self):
+        user = cast(UserAccount, self.data)
+        if user:
+            user.logged_in = False
+        YamlLoader.serialize_users(Model.users, Model.users_db)
+        ViewManager.switch_view(self.view_name, self.result)
 
 
 class StartTransactionAction(MenuAction):
@@ -140,4 +154,6 @@ class CloseTransactionAction(MenuAction):
         transaction = cast(Transaction, self.data)
         if transaction and transaction.user:
             self.result = transaction.user
+            YamlLoader.serialize_users(Model.users, Model.users_db)
+            YamlLoader.serialize_stocks(Model.stocks, Model.stocks_db)
             ViewManager.switch_view(self.view_name, self.result)
