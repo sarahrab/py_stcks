@@ -68,7 +68,6 @@ class RegisterAction(MenuAction):
             YamlLoader.serialize_users(Model.users, Model.users_db)
             ViewManager.switch_view(self.view_name, self.result)
 
-
 class LogoutAction(MenuAction):
     def __init__(self, view_name, data: object | None = None):
         super().__init__(data)
