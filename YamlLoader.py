@@ -12,7 +12,7 @@ class YamlLoader:
     def serialize_stocks(cls, stocks: Stocks, filename: str):
         if stocks:
             stocks_dict = stocks.model_dump()
-            #stocks_yaml = yaml.dump(stocks_dict)
+            # stocks_yaml = yaml.dump(stocks_dict)
             with open(filename, 'w') as file:
                 yaml.dump(stocks_dict, file)
 

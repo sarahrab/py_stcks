@@ -1,0 +1,12 @@
+import  requests
+from fastapi import FastAPI
+
+if __name__ == '__main__':
+    app = FastAPI()
+    url = "https://jsonplaceholder.typicode.com/users"
+    all_users = requests.get(url).json()
+    print(all_users)
+
+
+ pip install "fastapi[standard]"
+

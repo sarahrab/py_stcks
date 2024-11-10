@@ -57,3 +57,6 @@ class Stocks(BaseModel):
                 self.stocks.remove(stock)
             return True
         return False
+
+    def count(self):
+        return len(self.stocks)

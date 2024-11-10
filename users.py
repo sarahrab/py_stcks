@@ -50,7 +50,7 @@ class UserManager(BaseModel):
         user = self.find(name)
         if user is not None:
             if user.stocks.count() == 0:
-                user.loggedIn = False
+                user.logged_in = False
                 self.users.remove(user)
                 return True
         return False

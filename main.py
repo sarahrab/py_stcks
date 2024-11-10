@@ -1,4 +1,5 @@
 from ViewManager import ViewManager, Model
+from Views.DeleteView import DeleteView
 from Views.LoginView import LoginView
 from Views.RegisterUserView import RegisterUserView
 from Views.StockCountView import StockCountView
@@ -16,11 +17,10 @@ from actions import *
 from dotenv import load_dotenv
 import os
 
+from validation import TransactionValidation
+
 
 def init_views():
-    load_dotenv()
-    Model.users_db = os.getenv('USERS_DB_FILE')
-    Model.stocks_db = os.getenv('STOCKS_DB_FILE')
 
     # menu_welcome = Menu("w")
     # menu_welcome.add_item(MenuItem("1", "Login", SwitchViewAction("login")))
@@ -90,11 +90,21 @@ def init_views():
     result_view = TransactionResultView("result")
     ViewManager.add_view(result_view)
 
+    delete_view = DeleteView("delete")
+    ViewManager.add_view(delete_view)
+
 
 if __name__ == '__main__':
+
+    # Model.stocks = YamlLoader.deserialize_stocks(Model.stocks_db)
+    # Model.users = YamlLoader.deserialize_users(Model.users_db)
+
+    load_dotenv()
+    Model.users_db = os.getenv('USERS_DB_FILE')
+    Model.stocks_db = os.getenv('STOCKS_DB_FILE')
+    Model.initialize()
+
+    TransactionValidation.validation_url = os.getenv('VALIDATION_ENDPOINT')
+
     init_views()
-
-    Model.stocks = YamlLoader.deserialize_stocks(Model.stocks_db)
-    Model.users = YamlLoader.deserialize_users(Model.users_db)
-
     ViewManager.switch_view("welcome")

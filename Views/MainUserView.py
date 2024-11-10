@@ -1,6 +1,6 @@
 from ViewManager import Transaction, Model
 from YamlLoader import YamlLoader
-from actions import LogoutAction, StartTransactionAction, SwitchViewAction
+from actions import LogoutAction, StartTransactionAction, SwitchViewAction, DeleteAction
 from basics import *
 from typing import cast
 
@@ -34,4 +34,5 @@ class MainUserView(View):
         self.menu.add_item(MenuItem("3", "Buy", StartTransactionAction("buy", True)))
         self.menu.add_item(MenuItem("4", "Sell", StartTransactionAction("sell", False)))
         self.menu.add_item(MenuItem("5", "Logout", LogoutAction("welcome")))
+        self.menu.add_item(MenuItem("6", "Delete Account", SwitchViewAction("delete")))dd
 

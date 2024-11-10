@@ -5,6 +5,7 @@ from typing import cast
 
 from stocks import Stock
 from users import UserAccount, User
+from validation import TransactionValidation
 
 
 class SwitchViewAction(MenuAction):
@@ -116,6 +117,12 @@ class TransactionExecuteAction(MenuAction):
     def execute(self):
         transaction = cast(Transaction, self.data)
         if transaction and transaction.user:
+
+            #VALIDATE()
+            if not TransactionValidation.validate_transaction():
+                print("Invalid transaction")
+                ViewManager.switch_back()
+
             if transaction.is_buying:
                 self.execute_buy(transaction)
             else:
@@ -156,3 +163,17 @@ class CloseTransactionAction(MenuAction):
             YamlLoader.serialize_users(Model.users, Model.users_db)
             YamlLoader.serialize_stocks(Model.stocks, Model.stocks_db)
             ViewManager.switch_view(self.view_name, self.result)
+
+
+class DeleteAction(MenuAction):
+    def __init__(self, view_name: str, data: object | None = None):
+        super().__init__(data)
+        self.view_name = view_name
+
+    def execute(self):
+        user = cast(UserAccount, self.data)
+        if user:
+            Model.users.remove(user.name)
+            YamlLoader.serialize_users(Model.users, Model.users_db)
+            ViewManager.switch_view("welcome")
+

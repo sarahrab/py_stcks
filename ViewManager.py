@@ -1,5 +1,6 @@
 import sys
 
+from YamlLoader import YamlLoader
 from basics import View, MenuAction
 from typing import cast
 
@@ -45,6 +46,15 @@ class Model:
     users = UserManager()
     stocks_db = ''
     users_db = ''
+
+    @classmethod
+    def initialize(cls):
+        s = YamlLoader.deserialize_stocks(Model.stocks_db)
+        if s is not None:
+            cls.stocks = s
+        u = YamlLoader.deserialize_users(Model.users_db)
+        if u is not None:
+            cls.users = u
 
 
 class Transaction:
