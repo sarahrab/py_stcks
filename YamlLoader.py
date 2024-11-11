@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, TypeAdapter
 import yaml
 
 from stocks import Stocks
@@ -22,7 +22,8 @@ class YamlLoader:
         try:
             with open(filename, 'r') as file:
                 stocks_yaml = yaml.safe_load(file)
-                result = Stocks(**stocks_yaml)
+                #result = Stocks(**stocks_yaml)
+                result = TypeAdapter(Stocks).validate_python(stocks_yaml)
         except:
             result = None
         finally:
@@ -35,14 +36,14 @@ class YamlLoader:
             with open(filename, 'w') as file:
                 yaml.dump(users_dict, file)
 
-
     @classmethod
     def deserialize_users(cls, filename: str) -> UserManager | None:
         result: Optional[UserManager] = None
         try:
             with open(filename, 'r') as file:
                 users_yaml = yaml.safe_load(file)
-                result = UserManager(**users_yaml)
+                #result = UserManager(**users_yaml)
+                result = TypeAdapter(UserManager).validate_python(users_yaml)
         except:
             result = None
         finally:

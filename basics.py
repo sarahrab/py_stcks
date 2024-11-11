@@ -41,10 +41,12 @@ class Menu:
 
     def run(self, data: object | None = None):
         self.show(data)
-        option = input()
-        item = self.get_item(option)
-        if item is not None:
-            item.execute(data)
+        item = None
+        while item is None:
+            option = input()
+            item = self.get_item(option)
+            #if item is not None:
+        item.execute(data)
 
     def count(self) -> int:
         return len(self.items)

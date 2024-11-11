@@ -49,9 +49,23 @@ class Model:
 
     @classmethod
     def initialize(cls):
+        cls.initialize_stocks()
+        # s = YamlLoader.deserialize_stocks(Model.stocks_db)
+        # if s is not None:
+        #     cls.stocks = s
+        cls.initialize_users()
+        # u = YamlLoader.deserialize_users(Model.users_db)
+        # if u is not None:
+        #     cls.users = u
+
+    @classmethod
+    def initialize_stocks(cls):
         s = YamlLoader.deserialize_stocks(Model.stocks_db)
         if s is not None:
             cls.stocks = s
+
+    @classmethod
+    def initialize_users(cls):
         u = YamlLoader.deserialize_users(Model.users_db)
         if u is not None:
             cls.users = u

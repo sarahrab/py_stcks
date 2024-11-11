@@ -1,1 +1,7 @@
-users: []
+users:
+- amount: 700
+  logged_in: false
+  name: ty
+  password: hhh
+  stocks:
+    stocks: []

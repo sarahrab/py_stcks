@@ -50,8 +50,12 @@ class LoginAction(MenuAction):
                 YamlLoader.serialize_users(Model.users, Model.users_db)
                 ViewManager.switch_view(self.view_name, self.result)
             else:
-                print("Unknown user. Please try again.")
-                ViewManager.switch_view("login", self.result)
+                # print("Unknown user. Please try again.")
+                retry = input("Unknown user. Do you want to try again (Y/N)?")
+                if  retry.lower() == "y":
+                    ViewManager.switch_view("login", self.result)
+                else:
+                    ViewManager.switch_back()
 
 
 class RegisterAction(MenuAction):
@@ -106,6 +110,7 @@ class SelectStockAction(MenuAction):
         self.result = cast(Transaction, self.data)
         if self.result:
             self.result.stock = self.stock
+            self.result.price = self.stock.price
             ViewManager.switch_view(self.view_name, self.result)
 
 
@@ -118,6 +123,10 @@ class TransactionExecuteAction(MenuAction):
         transaction = cast(Transaction, self.data)
         if transaction and transaction.user:
 
+            if not self.check_stock_price(transaction):
+                print("Stock price has changed.")
+                ViewManager.switch_back()
+
             #VALIDATE()
             if not TransactionValidation.validate_transaction():
                 print("Invalid transaction")
@@ -129,6 +138,14 @@ class TransactionExecuteAction(MenuAction):
                 self.execute_sell(transaction)
             self.result= transaction
             ViewManager.switch_view(self.view_name, self.result)
+
+    def check_stock_price(self, transaction: Transaction) -> bool:
+        Model.initialize_stocks()
+        stock = Model.stocks.find(transaction.stock.agency)
+        if stock is None:
+            return False
+        else:
+            return stock.price == transaction.price
 
     def execute_buy(self, transaction: Transaction):
         if not Model.stocks.remove(transaction.stock.agency, transaction.count):

@@ -1,5 +1,6 @@
-import  requests
+import requests
 from fastapi import FastAPI
+
 
 class TransactionValidation:
     app = FastAPI()
@@ -8,5 +9,5 @@ class TransactionValidation:
     @classmethod
     def validate_transaction(cls) -> bool:
         response = requests.get(cls.validation_url).json()
-        # check result   result = response["result"]
-        return True # False
+        result = response["can_execute"]
+        return result

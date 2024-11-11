@@ -1,5 +1,7 @@
+from ViewManager import Model
 from actions import SwitchBackAction
 from basics import *
+from pie import Pie
 from users import UserAccount
 from typing import cast
 
@@ -16,6 +18,8 @@ class UserStocksView(View):
             for stock in user.stocks.stocks:
                 print("  " + stock.to_string())
             print(f"Total in stocks: {user.stocks.get_stocks_value()}")
+
+            Pie.show_stock_pie(Model.stocks)
 
 
     def create_menu(self):
