@@ -1,0 +1,44 @@
+from typing import List
+from pydantic import BaseModel, TypeAdapter
+
+class User(BaseModel):
+    name: str
+    password: str
+    amount: int
+
+class Stock(BaseModel):
+    agency: str
+    price: float
+    count: int
+
+class UserAccount(User):
+    logged_in: bool = False
+    stocks: List[Stock] = []
+
+    def append_stock(self, stock: Stock):
+        self.stocks.append(stock);
+
+class Users(BaseModel):
+    name: str
+    users: List[UserAccount] = []
+
+
+
+if __name__ == '__main__':
+    users = Users(name="My Users")
+    i = 1
+    while i < 5:
+        u = UserAccount(name=f"User{i}", password=f"pass{i + 2}", amount=i * 100)
+        j = 1
+        while j < 6:
+            s = Stock(agency = f"Company {j}", price = j + 1.1, count = j * 8)
+            u.append_stock(s)
+            j += 1
+        users.users.append(u)
+        i += 1
+
+    d = users.model_dump()
+    print(d)
+
+    items = TypeAdapter(Users).validate_python(d)
+    print(items)
