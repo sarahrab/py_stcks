@@ -7,7 +7,8 @@ class Model:
 
     @classmethod
     def initialize(cls):
-        s = YamlLoader.deserialize_stocks(Model.stocks_db)
+        s = 
+YamlLoader.deserialize_stocks(Model.stocks_db)
         if s is not None:
             stocks = s
         u = YamlLoader.deserialize_users(Model.users_db)
@@ -24,3 +25,20 @@ if __name__ == '__main__':
 
     ViewManager.switch_view("welcome")
 
+
+import requests
+
+# The API endpoint
+url = "https://jsonplaceholder.typicode.com/posts/1"
+
+# A GET request to the API
+response = requests.get(url)
+
+# Print the response
+print(response.json())
+
+
+UserStocksView.py:
+...
+במקום: Pie.show_stock_pie(Model.stocks)
+Pie.show_stock_pie(user.stocks)
