@@ -4,6 +4,8 @@ from basics import *
 from users import *
 from typing import cast
 
+from utils import Utils
+
 
 class StockCountView(View):
     def __init__(self, title, menu: Menu = None):
@@ -21,8 +23,8 @@ class StockCountView(View):
             if transaction.is_buying:
                 amount = 0
                 while not valid:
-                    amount = self.get_int("input money sum : ")
-                    #amount = input("input money sum : ")
+                    # amount = self.get_int("input money sum : ")
+                    amount = Utils.get_int("input money sum : ")
                     if amount > transaction.user.amount:
                         print("error: not enough money")
                     elif amount <= 0:
@@ -34,8 +36,7 @@ class StockCountView(View):
             else:
                 count = 0
                 while not valid:
-                    count = self.get_int("input stock count : ")
-                    #count = input("input stock count : ")
+                    count = Utils.get_int("input stock count : ")
                     if count <= 0:
                         print("error: not valid count")
                     elif count > transaction.stock.count:
@@ -46,14 +47,14 @@ class StockCountView(View):
                 print(f"{text} : {count} {transaction.stock.agency} for {amount}")
             transaction.count = count
 
-    def get_int(self, element: str) -> int:
-        value= input(element)
-        try:
-            number = int(value)
-            return  number
-        except ValueError:
-            print("invalid format!")
-            return  0
+    # def get_int(self, element: str) -> int:
+    #     value= input(element)
+    #     try:
+    #         number = int(value)
+    #         return  number
+    #     except ValueError:
+    #         print("invalid format!")
+    #         return  0
 
     def create_menu(self):
         self.menu = Menu("sc")
