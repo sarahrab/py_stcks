@@ -3,7 +3,7 @@ from fastapi import FastAPI
 
 
 class TransactionValidation:
-    app = FastAPI()
+    #app = FastAPI()
     validation_url = ""
 
     @classmethod
