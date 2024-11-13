@@ -1,7 +1,16 @@
 users:
-- amount: 700
+- amount: 697
   logged_in: true
   name: ty
   password: hhh
+  stocks:
+    stocks:
+    - agency: Company 2
+      count: 1
+      price: 3
+- amount: 125
+  logged_in: true
+  name: sara
+  password: papa<3
   stocks:
     stocks: []

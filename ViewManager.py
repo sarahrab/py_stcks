@@ -4,6 +4,7 @@ from YamlLoader import YamlLoader
 from basics import View, MenuAction
 from typing import cast
 
+from singleton import Singleton
 from stocks import Stocks
 from users import UserManager
 
@@ -41,34 +42,41 @@ class ViewManager:
         return False
 
 
-class Model:
+class Model(metaclass=Singleton):
     stocks = Stocks()
     users = UserManager()
     stocks_db = ''
     users_db = ''
 
-    @classmethod
-    def initialize(cls):
-        cls.initialize_stocks()
+    def initialize(self):
+        self.initialize_stocks()
         # s = YamlLoader.deserialize_stocks(Model.stocks_db)
         # if s is not None:
         #     cls.stocks = s
-        cls.initialize_users()
+        self.initialize_users()
         # u = YamlLoader.deserialize_users(Model.users_db)
         # if u is not None:
         #     cls.users = u
 
-    @classmethod
-    def initialize_stocks(cls):
-        s = YamlLoader.deserialize_stocks(Model.stocks_db)
+    def initialize_stocks(self):
+        s = YamlLoader.deserialize_stocks(self.stocks_db)
         if s is not None:
-            cls.stocks = s
+            self.stocks = s
 
-    @classmethod
-    def initialize_users(cls):
-        u = YamlLoader.deserialize_users(Model.users_db)
+    def initialize_users(self):
+        u = YamlLoader.deserialize_users(self.users_db)
         if u is not None:
-            cls.users = u
+            self.users = u
+
+    def save_users(self):
+        YamlLoader.serialize_users(self.users, self.users_db)
+
+    def save_stock(self):
+        YamlLoader.serialize_stocks(self.stocks, self.stocks_db)
+
+    def save(self):
+        self.save_stock()
+        self.save_users()
 
 
 class Transaction:

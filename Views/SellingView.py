@@ -19,7 +19,7 @@ class SellingView(View):
     def create_menu(self):
         t = cast(Transaction, self.data)
         if t and t.user:
-            user = Model.users.find(t.user.name)
+            user = Model().users.find(t.user.name)
             if user:
                 self.menu = Menu("menu_sell")
                 count = 1

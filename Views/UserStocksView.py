@@ -19,7 +19,7 @@ class UserStocksView(View):
                 print("  " + stock.to_string())
             print(f"Total in stocks: {user.stocks.get_stocks_value()}")
 
-            Pie.show_stock_pie(Model.stocks)
+            Pie.show_stock_pie(Model().stocks)
 
 
     def create_menu(self):
