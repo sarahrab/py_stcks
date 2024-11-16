@@ -3,8 +3,9 @@ from typing import Optional
 from pydantic import BaseModel, TypeAdapter
 import yaml
 
+from ErrorManager import ErrorManager
 from stocks import Stocks
-from users import UserAccount, UserManager
+from users import UserManager
 
 
 class YamlLoader:
@@ -48,3 +49,16 @@ class YamlLoader:
             result = None
         finally:
             return result
+
+    @classmethod
+    def deserialize_error_messages(cls, filename: str) -> ErrorManager | None:
+        result: Optional[ErrorManager] = None
+        try:
+            with open(filename, 'r') as file:
+                dict = yaml.safe_load(file)
+                result = TypeAdapter(ErrorManager).validate_python(dict)
+        except:
+            result = None
+        finally:
+            return result
+

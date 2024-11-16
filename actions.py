@@ -40,7 +40,7 @@ class LoginAction(MenuAction):
         self.view_name = view_name
 
     def execute(self):
-        self.result = False
+        self.result = None
         find = cast(User, self.data)
         if find is not None:
             user = Model().users.find(find.name, find.password)
@@ -52,7 +52,8 @@ class LoginAction(MenuAction):
                 ViewManager.switch_view(self.view_name, self.result)
             else:
                 # print("Unknown user. Please try again.")
-                retry = input("Unknown user. Do you want to try again (Y/N)?")
+                msg = Model().error_messages.get_error_message("unknown_user")
+                retry = input(msg)
                 if  retry.lower() == "y":
                     ViewManager.switch_view("login", self.result)
                 else:
@@ -68,6 +69,12 @@ class RegisterAction(MenuAction):
         self.result = False
         if self.data is not None:
             reg_user = cast(UserAccount, self.data)
+            u = Model().users.find(reg_user.name)
+            if u is not None:
+                msg = Model().error_messages.get_error_message("user_exists")
+                print(msg.replace("{user_name}", reg_user.name))
+                ViewManager.switch_back()
+
             user = Model().users.add(reg_user.name, reg_user.password, reg_user.amount)
             user.logged_in = True
             self.result = user

@@ -1,8 +1,10 @@
 import sys
 
+from pydantic import BaseModel
+
 from YamlLoader import YamlLoader
 from basics import View, MenuAction
-from typing import cast
+from typing import cast, Dict
 
 from singleton import Singleton
 from stocks import Stocks
@@ -42,11 +44,14 @@ class ViewManager:
         return False
 
 
+
 class Model(metaclass=Singleton):
     stocks = Stocks()
     users = UserManager()
+    error_messages = {}
     stocks_db = ''
     users_db = ''
+    error_messages_db = ''
 
     def initialize(self):
         self.initialize_stocks()
@@ -57,6 +62,7 @@ class Model(metaclass=Singleton):
         # u = YamlLoader.deserialize_users(Model.users_db)
         # if u is not None:
         #     cls.users = u
+        self.initialize_error_messages()
 
     def initialize_stocks(self):
         s = YamlLoader.deserialize_stocks(self.stocks_db)
@@ -77,6 +83,9 @@ class Model(metaclass=Singleton):
     def save(self):
         self.save_stock()
         self.save_users()
+
+    def initialize_error_messages(self):
+        self.error_messages = YamlLoader.deserialize_error_messages(self.error_messages_db)
 
 
 class Transaction:

@@ -102,6 +102,7 @@ if __name__ == '__main__':
     load_dotenv()
     Model().users_db = os.getenv('USERS_DB_FILE')
     Model().stocks_db = os.getenv('STOCKS_DB_FILE')
+    Model().error_messages_db = os.getenv('DB_ERRORS')
     Model().initialize()
 
     TransactionValidation.validation_url = os.getenv('VALIDATION_ENDPOINT')
