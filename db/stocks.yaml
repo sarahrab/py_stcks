@@ -1,9 +1,9 @@
 stocks:
 - agency: Company 2
-  count: 7
+  count: 1
   price: 3
 - agency: Company 3
-  count: 60
+  count: 55
   price: 4
 - agency: Company 4
   count: 80

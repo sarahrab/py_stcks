@@ -14,7 +14,7 @@ class TransactionSummaryView(View):
         transaction = cast(Transaction, self.data)
         if transaction:
             print(f"{transaction.user.name} current amount: {transaction.user.amount}")
-            text = "buying" if transaction.is_buying else "selling"
+            text = "buying" if type(transaction) is BuyTransaction else "selling"
             print(f"{text}: {transaction.stock.to_string()}")
             print(f"count: {transaction.count} for {transaction.stock.price} per stock")
             print(f"total transaction price: {transaction.stock.price * transaction.count}")

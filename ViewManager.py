@@ -44,7 +44,6 @@ class ViewManager:
         return False
 
 
-
 class Model(metaclass=Singleton):
     stocks = Stocks()
     users = UserManager()
@@ -89,10 +88,20 @@ class Model(metaclass=Singleton):
 
 
 class Transaction:
-    def __init__(self, is_buying: bool):
+    def __init__(self):
         self.user = None
         self.stock = None
-        self.is_buying = is_buying
+        # self.is_buying = is_buying
         self.count = 0
         self.price = 0
         self.error_msg = ""
+
+
+class BuyTransaction(Transaction):
+    def __init__(self):
+        super().__init__()
+
+
+class SellTransaction(Transaction):
+    def __init__(self):
+        super().__init__()

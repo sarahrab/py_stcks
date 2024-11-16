@@ -1,4 +1,4 @@
-from ViewManager import Transaction
+from ViewManager import Transaction, BuyTransaction
 from actions import SwitchViewAction, SwitchBackAction
 from basics import *
 from users import *
@@ -16,11 +16,12 @@ class StockCountView(View):
         transaction = cast(Transaction, self.data)
         if transaction and transaction.user:
             print(f"{transaction.user.name} total amount: {transaction.user.amount}")
-            text = "buying" if transaction.is_buying else "selling"
+            is_buying = True if type(self.data) is BuyTransaction else False
+            text = "buying" if is_buying else "selling"
             print(f"{text} : {transaction.stock.agency} for {transaction.stock.price}")
             valid = False
             count = 0
-            if transaction.is_buying:
+            if is_buying:
                 amount = 0
                 while not valid:
                     # amount = self.get_int("input money sum : ")

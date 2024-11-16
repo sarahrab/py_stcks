@@ -1,6 +1,6 @@
 from YamlLoader import YamlLoader
 from basics import MenuAction
-from ViewManager import ViewManager, Model, Transaction
+from ViewManager import ViewManager, Model, Transaction, BuyTransaction, SellTransaction
 from typing import cast
 
 from stocks import Stock, Stocks
@@ -105,7 +105,7 @@ class StartTransactionAction(MenuAction):
     def execute(self):
         if self.data is not None:
             reg_user = cast(UserAccount, self.data)
-            self.result = Transaction(self.is_buying)
+            self.result = BuyTransaction() if  self.is_buying else SellTransaction()
             self.result.user = reg_user
             ViewManager.switch_view(self.view_name, self.result)
 
@@ -142,7 +142,7 @@ class TransactionExecuteAction(MenuAction):
             #     print("Invalid transaction")
             #     ViewManager.switch_back()
 
-            if transaction.is_buying:
+            if type(self.data) is BuyTransaction:
                 self.execute_buy(transaction)
             else:
                 self.execute_sell(transaction)
