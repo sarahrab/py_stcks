@@ -18,7 +18,7 @@ class TransactionResultView(View):
 
     def create_menu(self):
         self.menu = Menu("r")
-        self.menu.add_item(MenuItem("1", "Continue", CloseTransactionAction("user_main")))
+        self.menu.add_item(MenuItem("Continue", CloseTransactionAction("user_main")))
 
 
 

@@ -19,9 +19,10 @@ class UserStocksView(View):
                 print("  " + stock.to_string())
             print(f"Total in stocks: {user.stocks.get_stocks_value()}")
 
-            Pie.show_stock_pie(Model.stocks)
+            if user.stocks.count() > 0:
+                Pie.show_stock_pie(user.stocks)
 
 
     def create_menu(self):
         self.menu = Menu("s")
-        self.menu.add_item(MenuItem("1", "Back", SwitchBackAction()))
+        self.menu.add_item(MenuItem("Back", SwitchBackAction()))

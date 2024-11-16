@@ -17,7 +17,7 @@ class LoginView(View):
 
     def create_menu(self):
         self.menu = Menu("l")
-        self.menu.add_item(MenuItem("1", "Submit", LoginAction("user_main")))
-        self.menu.add_item(MenuItem("2", "Cancel", SwitchViewAction("welcome")))
+        self.menu.add_item(MenuItem("Submit", LoginAction("user_main")))
+        self.menu.add_item(MenuItem("Cancel", SwitchViewAction("welcome")))
 
 

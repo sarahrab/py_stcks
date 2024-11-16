@@ -58,6 +58,6 @@ class StockCountView(View):
 
     def create_menu(self):
         self.menu = Menu("sc")
-        self.menu.add_item(MenuItem("1", "Submit", SwitchViewAction("trans")))
-        self.menu.add_item(MenuItem("2", "Cancel", SwitchBackAction()))
+        self.menu.add_item(MenuItem("Submit", SwitchViewAction("trans")))
+        self.menu.add_item(MenuItem("Cancel", SwitchBackAction()))
 

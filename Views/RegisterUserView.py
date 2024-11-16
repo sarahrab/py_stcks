@@ -21,5 +21,5 @@ class RegisterUserView(LoginView):
 
     def create_menu(self):
         self.menu = Menu("r")
-        self.menu.add_item(MenuItem("1", "Submit", RegisterAction("user_main")))
-        self.menu.add_item(MenuItem("2", "Cancel", SwitchViewAction("welcome")))
+        self.menu.add_item(MenuItem("Submit", RegisterAction("user_main")))
+        self.menu.add_item(MenuItem("Cancel", SwitchViewAction("welcome")))

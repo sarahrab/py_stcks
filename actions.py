@@ -9,7 +9,7 @@ from validation import TransactionValidation
 
 
 class SwitchViewAction(MenuAction):
-    def __init__(self, name: str, data: object | None = None):
+    def __init__(self, name: str, data = None):
         super().__init__(data)
         self.name = name
 
@@ -128,9 +128,9 @@ class TransactionExecuteAction(MenuAction):
                 ViewManager.switch_back()
 
             #VALIDATE()
-            if not TransactionValidation.validate_transaction():
-                print("Invalid transaction")
-                ViewManager.switch_back()
+            # if not TransactionValidation.validate_transaction():
+            #     print("Invalid transaction")
+            #     ViewManager.switch_back()
 
             if transaction.is_buying:
                 self.execute_buy(transaction)

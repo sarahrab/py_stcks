@@ -19,11 +19,11 @@ class SellingView(View):
     def create_menu(self):
         t = cast(Transaction, self.data)
         if t and t.user:
-            user = Model.users.find(t.user.name)
+            user = t.user # Model.users.find(t.user.name)
             if user:
                 self.menu = Menu("menu_sell")
                 count = 1
                 for stock in t.user.stocks.stocks:
-                    self.menu.add_item(MenuItem(f"{count}", stock.to_string(), SelectStockAction("sc", stock, t)))
+                    self.menu.add_item(MenuItem(stock.to_string(), SelectStockAction("sc", stock, t)))
                     count += 1
-                self.menu.add_item(MenuItem(f"{count}", "Back", SwitchBackAction(t.user)))
+                self.menu.add_item(MenuItem("Back", SwitchBackAction(t.user)))

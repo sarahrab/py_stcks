@@ -21,5 +21,5 @@ class TransactionSummaryView(View):
 
     def create_menu(self):
         self.menu = Menu("tr")
-        self.menu.add_item(MenuItem("1", "Execute", TransactionExecuteAction("result")))
-        self.menu.add_item(MenuItem("2", "Cancel", SwitchBackAction()))
+        self.menu.add_item(MenuItem("Execute", TransactionExecuteAction("result")))
+        self.menu.add_item(MenuItem("Cancel", SwitchBackAction()))

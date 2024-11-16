@@ -18,5 +18,5 @@ class UserFundsView(View):
 
     def create_menu(self):
         self.menu = Menu("f")
-        self.menu.add_item(MenuItem("1", "Back", SwitchBackAction()))
+        self.menu.add_item(MenuItem("Back", SwitchBackAction()))
 

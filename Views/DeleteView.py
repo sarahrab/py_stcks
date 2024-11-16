@@ -22,6 +22,6 @@ class DeleteView(View):
 
     def create_menu(self):
         self.menu = Menu("d")
-        self.menu.add_item(MenuItem("1", "Confirm", DeleteAction("user_main")))
-        self.menu.add_item(MenuItem("2", "Cancel", SwitchBackAction()))
+        self.menu.add_item(MenuItem("Confirm", DeleteAction("user_main")))
+        self.menu.add_item(MenuItem("Cancel", SwitchBackAction()))
 

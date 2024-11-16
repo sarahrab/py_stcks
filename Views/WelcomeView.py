@@ -16,9 +16,8 @@ class WelcomeView(View):
         self.create_menu()
         print("Welcome, friend!")
 
-
     def create_menu(self):
         self.menu = Menu("w")
-        self.menu.add_item(MenuItem("1", "Login", SwitchViewAction("login")))
-        self.menu.add_item(MenuItem("2", "Register", SwitchViewAction("regUser")))
-        self.menu.add_item(MenuItem("3", "Exit", ExitViewAction()))
+        self.menu.add_item(MenuItem("Login", SwitchViewAction("login")))
+        self.menu.add_item(MenuItem("Register", SwitchViewAction("regUser")))
+        self.menu.add_item(MenuItem("Exit", ExitViewAction()))

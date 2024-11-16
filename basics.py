@@ -8,8 +8,8 @@ class MenuAction:
 
 
 class MenuItem:
-    def __init__(self, id: str, text: str, action: MenuAction):
-        self.id = id
+    def __init__(self, text: str, action: MenuAction):
+        self.id = -1
         self.text = text
         self.action = action
 
@@ -28,6 +28,7 @@ class Menu:
 
     def add_item(self, item: MenuItem):
         self.items.append(item)
+        item.id = f"{len(self.items)}"
 
     def get_item(self, id: str) -> MenuItem | None:
         for item in self.items:
