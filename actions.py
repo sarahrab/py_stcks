@@ -3,7 +3,7 @@ from basics import MenuAction
 from ViewManager import ViewManager, Model, Transaction
 from typing import cast
 
-from stocks import Stock
+from stocks import Stock, Stocks
 from users import UserAccount, User
 from validation import TransactionValidation
 
@@ -43,11 +43,12 @@ class LoginAction(MenuAction):
         self.result = False
         find = cast(User, self.data)
         if find is not None:
-            user = Model.users.find(find.name, find.password)
+            user = Model().users.find(find.name, find.password)
             if user is not None:
                 user.logged_in = True
                 self.result = user
-                YamlLoader.serialize_users(Model.users, Model.users_db)
+                # YamlLoader.serialize_users(Model().users, Model().users_db)
+                Model().save_users()
                 ViewManager.switch_view(self.view_name, self.result)
             else:
                 # print("Unknown user. Please try again.")
@@ -67,10 +68,11 @@ class RegisterAction(MenuAction):
         self.result = False
         if self.data is not None:
             reg_user = cast(UserAccount, self.data)
-            user = Model.users.add(reg_user.name, reg_user.password, reg_user.amount)
+            user = Model().users.add(reg_user.name, reg_user.password, reg_user.amount)
             user.logged_in = True
             self.result = user
-            YamlLoader.serialize_users(Model.users, Model.users_db)
+            #YamlLoader.serialize_users(Model().users, Model().users_db)
+            Model().save_users()
             ViewManager.switch_view(self.view_name, self.result)
 
 class LogoutAction(MenuAction):
@@ -82,7 +84,8 @@ class LogoutAction(MenuAction):
         user = cast(UserAccount, self.data)
         if user:
             user.logged_in = False
-        YamlLoader.serialize_users(Model.users, Model.users_db)
+        #YamlLoader.serialize_users(Model().users, Model().users_db)
+        Model().save_users()
         ViewManager.switch_view(self.view_name, self.result)
 
 
@@ -140,33 +143,45 @@ class TransactionExecuteAction(MenuAction):
             ViewManager.switch_view(self.view_name, self.result)
 
     def check_stock_price(self, transaction: Transaction) -> bool:
-        Model.initialize_stocks()
-        stock = Model.stocks.find(transaction.stock.agency)
+        Model().initialize_stocks()
+        stock = Model().stocks.find(transaction.stock.agency)
         if stock is None:
             return False
         else:
             return stock.price == transaction.price
 
     def execute_buy(self, transaction: Transaction):
-        if not Model.stocks.remove(transaction.stock.agency, transaction.count):
+        if not Model().stocks.remove(transaction.stock.agency, transaction.count):
             transaction.error_msg = "stock BAD"
             return
-        transaction.user.stocks.add(Stock(agency = transaction.stock.agency,
-                                          price = transaction.stock.price,
-                                          count = transaction.count))
-        transaction.user.amount -= transaction.stock.price * transaction.count
-        transaction.error_msg = "success!!!!"
+        self.finalize_transaction(transaction, transaction.user.stocks, -(transaction.stock.price * transaction.count))
+        # transaction.user.stocks.add(Stock(agency = transaction.stock.agency,
+        #                                   price = transaction.stock.price,
+        #                                   count = transaction.count))
+        # transaction.user.amount -= transaction.stock.price * transaction.count
+        # transaction.error_msg = "success!!!!"
 
     def execute_sell(self, transaction: Transaction):
         if not transaction.user.stocks.remove(transaction.stock.agency, transaction.count):
             transaction.error_msg = "stock BAD"
             return
-        Model.stocks.add(Stock(agency = transaction.stock.agency,
-                               price = transaction.stock.price,
-                               count = transaction.count))
-        transaction.user.amount += transaction.stock.price * transaction.count
-        transaction.error_msg = "success!!!!"
+        self.finalize_transaction(transaction, Model().stocks, transaction.stock.price * transaction.count)
+        # Model().stocks.add(Stock(agency = transaction.stock.agency,
+        #                        price = transaction.stock.price,
+        #                        count = transaction.count))
+        # transaction.user.amount += transaction.stock.price * transaction.count
+        # transaction.error_msg = "success!!!!"
 
+    def finalize_transaction(self, transaction: Transaction, stocks: Stocks, amount: int):
+        stocks.add(Stock(agency = transaction.stock.agency,
+                         price = transaction.stock.price,
+                         count = transaction.count))
+        transaction.user.amount += amount
+        # if transaction.is_buying:
+        #     transaction.user.amount -= amount
+        # else:
+        #     transaction.user.amount += amount
+        transaction.error_msg = "success!!!!"
 
 class CloseTransactionAction(MenuAction):
     def __init__(self, view_name: str, data: object | None = None):
@@ -177,8 +192,9 @@ class CloseTransactionAction(MenuAction):
         transaction = cast(Transaction, self.data)
         if transaction and transaction.user:
             self.result = transaction.user
-            YamlLoader.serialize_users(Model.users, Model.users_db)
-            YamlLoader.serialize_stocks(Model.stocks, Model.stocks_db)
+            #YamlLoader.serialize_users(Model().users, Model().users_db)
+            #YamlLoader.serialize_stocks(Model().stocks, Model().stocks_db)
+            Model().save()
             ViewManager.switch_view(self.view_name, self.result)
 
 
@@ -190,7 +206,8 @@ class DeleteAction(MenuAction):
     def execute(self):
         user = cast(UserAccount, self.data)
         if user:
-            Model.users.remove(user.name)
-            YamlLoader.serialize_users(Model.users, Model.users_db)
+            Model().users.remove(user.name)
+            #YamlLoader.serialize_users(Model().users, Model().users_db)
+            Model().save_users()
             ViewManager.switch_view("welcome")
 

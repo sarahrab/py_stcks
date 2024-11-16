@@ -100,9 +100,9 @@ if __name__ == '__main__':
     # Model.users = YamlLoader.deserialize_users(Model.users_db)
 
     load_dotenv()
-    Model.users_db = os.getenv('USERS_DB_FILE')
-    Model.stocks_db = os.getenv('STOCKS_DB_FILE')
-    Model.initialize()
+    Model().users_db = os.getenv('USERS_DB_FILE')
+    Model().stocks_db = os.getenv('STOCKS_DB_FILE')
+    Model().initialize()
 
     TransactionValidation.validation_url = os.getenv('VALIDATION_ENDPOINT')
 
