@@ -10,14 +10,14 @@ class SellingView(View):
         super().__init__(title, menu)
 
     def show(self):
-        trans = cast(Transaction, self.data)
+        trans = self.data
         if trans:
             print(f"{trans.user.name} total amount: {trans.user.amount}")
             print("select stock to sell: ")
             self.create_menu()
 
     def create_menu(self):
-        t = cast(Transaction, self.data)
+        t = self.data
         if t and t.user:
             user = t.user # Model.users.find(t.user.name)
             if user:

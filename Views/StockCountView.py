@@ -13,7 +13,7 @@ class StockCountView(View):
 
     def show(self):
         self.create_menu()
-        transaction = cast(Transaction, self.data)
+        transaction = self.data
         if transaction and transaction.user:
             print(f"{transaction.user.name} total amount: {transaction.user.amount}")
             is_buying = True if type(self.data) is BuyTransaction else False

@@ -12,7 +12,7 @@ class DeleteView(View):
 
     def show(self):
         self.create_menu()
-        user = cast(UserAccount, self.data)
+        user = self.data
         if user:
             if user.stocks.count() > 0:
                 print("You have to sell all your stocks!")

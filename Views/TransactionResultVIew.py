@@ -12,7 +12,7 @@ class TransactionResultView(View):
 
     def show(self):
         self.create_menu()
-        transaction= cast(Transaction, self.data)
+        transaction=self.data
         if transaction:
             print(f"transaction result: {transaction.error_msg}")
 

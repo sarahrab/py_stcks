@@ -11,7 +11,7 @@ class TransactionSummaryView(View):
 
     def show(self):
         self.create_menu()
-        transaction = cast(Transaction, self.data)
+        transaction = self.data
         if transaction:
             print(f"{transaction.user.name} current amount: {transaction.user.amount}")
             text = "buying" if type(transaction) is BuyTransaction else "selling"

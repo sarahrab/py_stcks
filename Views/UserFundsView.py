@@ -10,7 +10,7 @@ class UserFundsView(View):
 
     def show(self):
         self.create_menu()
-        user = cast(UserAccount, self.data)
+        user = self.data
         if user:
             print(f"{user.name} funds:")
             print(f"    Available   : {user.amount}")

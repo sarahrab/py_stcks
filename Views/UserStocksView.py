@@ -12,7 +12,7 @@ class UserStocksView(View):
 
     def show(self):
         self.create_menu()
-        user = cast(UserAccount, self.data)
+        user = self.data
         if user:
             print(f"{user.name} stocks:")
             for stock in user.stocks.stocks:

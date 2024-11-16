@@ -17,10 +17,9 @@ class MainUserView(View):
 
         user = None
         if type(self.data) == UserAccount:
-            user = cast(UserAccount, self.data)
+            user = self.data
         else:
-            t = cast(Transaction, self.data)
-            user = t.user
+            user = self.data.user
 
         if user is not None:
             print(f"Hello again, {user.name}!")
