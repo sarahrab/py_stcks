@@ -1,0 +1,29 @@
+class TransactionExecuteAction(MenuAction):
+    def __init__(self, view_name: str, data: Transaction | None = None):
+        super().__init__(data)
+        self.view_name = view_name
+
+    def execute(self):
+        transaction = self.data
+        if transaction and transaction.user:
+
+            if not self.check_stock_price(transaction):
+                print("Stock price has changed.")
+                ViewManager.switch_back()
+
+            # VALIDATE()
+            # if not TransactionValidation.validate_transaction():
+            #     print("Invalid transaction")
+            #     ViewManager.switch_back()
+
+            transaction.execute()
+            self.result = transaction
+            ViewManager.switch_view(self.view_name, self.result)
+
+    def check_stock_price(self, transaction: Transaction) -> bool:
+        Model().initialize_stocks()
+        stock = Model().stocks.find(transaction.stock.agency)
+        if stock is None:
+            return False
+        else:
+            return stock.price == transaction.price
