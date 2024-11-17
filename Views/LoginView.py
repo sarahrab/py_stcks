@@ -5,6 +5,9 @@ from typing import cast
 
 
 class LoginView(View):
+    def get_name(self) -> str:
+        return "login"
+
     def __init__(self, title, menu: Menu = None):
         super().__init__(title, menu)
 

@@ -7,8 +7,11 @@ from stocks import Stock
 
 
 class TransactionResultView(View):
-    def __init__(self, title, menu: Menu = None):
-        super().__init__(title, menu)
+    def get_name(self) -> str:
+        return "result"
+
+    def __init__(self, menu: Menu = None):
+        super().__init__(menu)
 
     def show(self):
         self.create_menu()

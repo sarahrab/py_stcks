@@ -5,8 +5,11 @@ from users import *
 from typing import cast
 
 class BuyingView(View):
-    def __init__(self, title, menu: Menu = None):
-        super().__init__(title, menu)
+    def get_name(self) -> str:
+        return "buy"
+
+    def __init__(self, menu: Menu = None):
+        super().__init__(menu)
 
     def show(self):
         #t = cast(Transaction, self.data)

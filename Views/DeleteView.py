@@ -7,6 +7,9 @@ from users import UserAccount
 
 
 class DeleteView(View):
+    def get_name(self) -> str:
+        return "delete"
+
     def __init__(self, title, menu: Menu = None):
         super().__init__(title, menu)
 

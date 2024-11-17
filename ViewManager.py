@@ -17,9 +17,9 @@ class ViewManager:
 
     @classmethod
     def add_view(cls, view: View):
-        v = cls.views.get(view.name, None)
+        v = cls.views.get(view.get_name(), None)
         if v is None:
-            cls.views[view.name] = view
+            cls.views[view.get_name()] = view
 
     @classmethod
     def switch_view(cls, name: str, data: object | None = None) -> bool:

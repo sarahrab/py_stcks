@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from typing import TypeVar, Generic
 
 T = TypeVar("T")
@@ -58,10 +59,28 @@ class Menu:
 
 
 class View:
-    def __init__(self, name, menu: Menu = None, data: T | None = None):
-        self.name = name
+    subclasses = []
+
+    def __init__(self, menu: Menu = None, data: T | None = None):
         self.menu = menu
         self.data = data
+
+    @classmethod
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        cls.subclasses.append(cls)
+
+    def __new__(cls, name: str):
+        for subclass in cls.subclasses:
+            if subclass.get_name(name) == name:
+                return object.__new__(subclass)
+        else:
+            return object.__new__(cls)  # Default is this base class.
+
+    @abstractmethod
+    def get_name(self) -> str:
+        pass
+
 
     def show(self):
         pass
@@ -71,5 +90,6 @@ class View:
         if self.menu is not None:
             self.menu.run(self.data)
 
+    @abstractmethod
     def create_menu(self):
         pass

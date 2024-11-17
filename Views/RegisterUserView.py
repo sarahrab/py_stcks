@@ -5,9 +5,12 @@ from users import UserAccount
 from utils import Utils
 
 
-class RegisterUserView(LoginView):
-    def __init__(self, title, menu: Menu = None):
-        super().__init__(title, menu)
+class RegisterUserView(View):
+    def __init__(self, menu: Menu = None):
+        super().__init__(menu)
+
+    def get_name(self) -> str:
+        return "regUser"
 
     def show(self):
         self.create_menu()
