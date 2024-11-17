@@ -7,7 +7,7 @@ from basics import View, MenuAction
 from typing import cast, Dict
 
 from singleton import Singleton
-from stocks import Stocks
+from stocks import Stocks, Stock
 from users import UserManager
 
 
@@ -91,17 +91,37 @@ class Transaction:
     def __init__(self):
         self.user = None
         self.stock = None
-        # self.is_buying = is_buying
         self.count = 0
         self.price = 0
         self.error_msg = ""
 
+    def finalize_transaction(self, stocks: Stocks, amount: int):
+        stocks.add(Stock(agency=self.stock.agency,
+                         price=self.stock.price,
+                         count=self.count))
+        self.user.amount += amount
+        self.error_msg = "success!!!!"
+
+    def execute(self):
+        pass
 
 class BuyTransaction(Transaction):
     def __init__(self):
         super().__init__()
 
+    def execute(self):
+        if not Model().stocks.remove(self.stock.agency, self.count):
+            self.error_msg = "stock BAD"
+            return
+        self.finalize_transaction(self.user.stocks, -(self.stock.price * self.count))
+
 
 class SellTransaction(Transaction):
     def __init__(self):
         super().__init__()
+
+    def execute(self):
+        if not self.user.stocks.remove(self.stock.agency, self.count):
+            self.error_msg = "stock BAD"
+            return
+        self.finalize_transaction(Model().stocks, self.stock.price * self.count)

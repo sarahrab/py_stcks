@@ -149,10 +149,7 @@ class TransactionExecuteAction(MenuAction):
             #     print("Invalid transaction")
             #     ViewManager.switch_back()
 
-            if type(self.data) is BuyTransaction:
-                self.execute_buy(transaction)
-            else:
-                self.execute_sell(transaction)
+            transaction.execute()
             self.result = transaction
             ViewManager.switch_view(self.view_name, self.result)
 
