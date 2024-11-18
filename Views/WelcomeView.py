@@ -1,11 +1,5 @@
-import yaml
-
-from ViewManager import Model
-from YamlLoader import YamlLoader
 from actions import ExitViewAction, SwitchViewAction
 from basics import *
-from stocks import Stock
-from users import UserAccount
 
 
 class WelcomeView(View):

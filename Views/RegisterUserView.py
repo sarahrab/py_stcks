@@ -1,8 +1,7 @@
-from Views.LoginView import LoginView
 from actions import SwitchViewAction, RegisterAction
 from basics import View, Menu, MenuItem
 from users import UserAccount
-from utils import Utils
+from Utils.utils import Utils
 
 
 class RegisterUserView(View):

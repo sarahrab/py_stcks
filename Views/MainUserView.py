@@ -1,10 +1,6 @@
-from ViewManager import Transaction, Model
-from YamlLoader import YamlLoader
-from actions import LogoutAction, StartTransactionAction, SwitchViewAction, DeleteAction
+from actions import LogoutAction, StartTransactionAction, SwitchViewAction
 from basics import *
-from typing import cast
 
-from stocks import Stock
 from users import *
 
 

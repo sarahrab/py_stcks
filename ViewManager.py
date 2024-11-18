@@ -1,12 +1,10 @@
-import sys
+import os
 
-from pydantic import BaseModel
+from Utils.YamlLoader import YamlLoader
+from basics import View
+from typing import cast
 
-from YamlLoader import YamlLoader
-from basics import View, MenuAction
-from typing import cast, Dict
-
-from singleton import Singleton
+from Utils.singleton import Singleton
 from stocks import Stocks, Stock
 from users import UserManager
 
@@ -51,6 +49,7 @@ class Model(metaclass=Singleton):
     stocks_db = ''
     users_db = ''
     error_messages_db = ''
+    stock_modified_at = 0
 
     def initialize(self):
         self.initialize_stocks()
@@ -67,6 +66,7 @@ class Model(metaclass=Singleton):
         s = YamlLoader.deserialize_stocks(self.stocks_db)
         if s is not None:
             self.stocks = s
+            self.stock_modified_at = os.path.getmtime(self.stocks_db)
 
     def initialize_users(self):
         u = YamlLoader.deserialize_users(self.users_db)

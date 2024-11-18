@@ -1,9 +1,6 @@
-from ViewManager import Model
 from actions import SwitchBackAction
 from basics import *
-from pie import Pie
-from users import UserAccount
-from typing import cast
+from Utils.pie import Pie
 
 
 class UserStocksView(View):

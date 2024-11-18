@@ -1,10 +1,8 @@
-from ViewManager import Transaction, BuyTransaction
+from ViewManager import BuyTransaction
 from actions import SwitchViewAction, SwitchBackAction
 from basics import *
-from users import *
-from typing import cast
 
-from utils import Utils
+from Utils.utils import Utils
 
 
 class StockCountView(View):

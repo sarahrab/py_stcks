@@ -1,14 +1,14 @@
-from YamlLoader import YamlLoader
+import os
+
 from basics import MenuAction
 from ViewManager import ViewManager, Model, Transaction, BuyTransaction, SellTransaction
-from typing import cast
 
 from stocks import Stock, Stocks
 from users import UserAccount, User
-from validation import TransactionValidation
-from typing import TypeVar, Generic
+from typing import TypeVar
 
 T = TypeVar("T")
+
 
 class SwitchViewAction(MenuAction):
     def __init__(self, name: str, data: T | None = None):
@@ -42,6 +42,10 @@ class LoginAction(MenuAction):
         self.view_name = view_name
 
     def execute(self):
+        if self.data is None:
+            print("Invalid user data")
+            ViewManager.switch_view("login", self.result)
+
         self.result = None
         # find = cast(User, self.data)
         # if find is not None:
@@ -71,7 +75,7 @@ class RegisterAction(MenuAction):
     def execute(self):
         self.result = False
         if self.data is not None:
-            # reg_user = cast(UserAccount, self.data)
+            reg_user = self.data
             u = Model().users.find(self.data.name)
             if u is not None:
                 msg = Model().error_messages.get_error_message("user_exists")
@@ -110,7 +114,7 @@ class StartTransactionAction(MenuAction):
 
     def execute(self):
         if self.data is not None:
-            #reg_user = cast(UserAccount, self.data)
+            # reg_user = cast(UserAccount, self.data)
             self.result = BuyTransaction() if self.is_buying else SellTransaction()
             self.result.user = self.data
             ViewManager.switch_view(self.view_name, self.result)
@@ -154,12 +158,16 @@ class TransactionExecuteAction(MenuAction):
             ViewManager.switch_view(self.view_name, self.result)
 
     def check_stock_price(self, transaction: Transaction) -> bool:
-        Model().initialize_stocks()
-        stock = Model().stocks.find(transaction.stock.agency)
-        if stock is None:
-            return False
+        modified = os.path.getmtime(Model().stocks_db)
+        if modified != Model().stock_modified_at:
+            Model().initialize_stocks()
+            stock = Model().stocks.find(transaction.stock.agency)
+            if stock is None:
+                return False
+            else:
+                return stock.price == transaction.price
         else:
-            return stock.price == transaction.price
+            return True
 
     def execute_buy(self, transaction: Transaction):
         if not Model().stocks.remove(transaction.stock.agency, transaction.count):

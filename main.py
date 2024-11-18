@@ -1,3 +1,7 @@
+from basics import View
+from actions import *
+from dotenv import load_dotenv
+import os
 from ViewManager import ViewManager, Model
 from Views.DeleteView import DeleteView
 from Views.LoginView import LoginView
@@ -11,12 +15,6 @@ from Views.MainUserView import MainUserView
 from Views.BuyingView import BuyingView
 from Views.SellingView import SellingView
 from Views.TransactionSummaryView import TransactionSummaryView
-from YamlLoader import YamlLoader
-from basics import MenuItem, Menu, View
-from actions import *
-from dotenv import load_dotenv
-import os
-
 from validation import TransactionValidation
 
 
