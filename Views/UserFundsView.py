@@ -5,12 +5,15 @@ from typing import cast
 
 
 class UserFundsView(View):
-    def __init__(self, title, menu: Menu = None):
-        super().__init__(title, menu)
+    def get_name(self) -> str:
+        return "user_funds"
+
+    def __init__(self, menu: Menu = None):
+        super().__init__(menu)
 
     def show(self):
         self.create_menu()
-        user = cast(UserAccount, self.data)
+        user = self.data
         if user:
             print(f"{user.name} funds:")
             print(f"    Available   : {user.amount}")
@@ -18,5 +21,5 @@ class UserFundsView(View):
 
     def create_menu(self):
         self.menu = Menu("f")
-        self.menu.add_item(MenuItem("1", "Back", SwitchBackAction()))
+        self.menu.add_item(MenuItem("Back", SwitchBackAction()))
 

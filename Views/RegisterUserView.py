@@ -5,9 +5,12 @@ from users import UserAccount
 from utils import Utils
 
 
-class RegisterUserView(LoginView):
-    def __init__(self, title, menu: Menu = None):
-        super().__init__(title, menu)
+class RegisterUserView(View):
+    def __init__(self, menu: Menu = None):
+        super().__init__(menu)
+
+    def get_name(self) -> str:
+        return "regUser"
 
     def show(self):
         self.create_menu()
@@ -21,5 +24,5 @@ class RegisterUserView(LoginView):
 
     def create_menu(self):
         self.menu = Menu("r")
-        self.menu.add_item(MenuItem("1", "Submit", RegisterAction("user_main")))
-        self.menu.add_item(MenuItem("2", "Cancel", SwitchViewAction("welcome")))
+        self.menu.add_item(MenuItem("Submit", RegisterAction("user_main")))
+        self.menu.add_item(MenuItem("Cancel", SwitchViewAction("welcome")))

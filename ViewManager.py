@@ -1,11 +1,13 @@
 import sys
 
+from pydantic import BaseModel
+
 from YamlLoader import YamlLoader
 from basics import View, MenuAction
-from typing import cast
+from typing import cast, Dict
 
 from singleton import Singleton
-from stocks import Stocks
+from stocks import Stocks, Stock
 from users import UserManager
 
 
@@ -15,9 +17,9 @@ class ViewManager:
 
     @classmethod
     def add_view(cls, view: View):
-        v = cls.views.get(view.name, None)
+        v = cls.views.get(view.get_name(), None)
         if v is None:
-            cls.views[view.name] = view
+            cls.views[view.get_name()] = view
 
     @classmethod
     def switch_view(cls, name: str, data: object | None = None) -> bool:
@@ -45,8 +47,10 @@ class ViewManager:
 class Model(metaclass=Singleton):
     stocks = Stocks()
     users = UserManager()
+    error_messages = {}
     stocks_db = ''
     users_db = ''
+    error_messages_db = ''
 
     def initialize(self):
         self.initialize_stocks()
@@ -57,6 +61,7 @@ class Model(metaclass=Singleton):
         # u = YamlLoader.deserialize_users(Model.users_db)
         # if u is not None:
         #     cls.users = u
+        self.initialize_error_messages()
 
     def initialize_stocks(self):
         s = YamlLoader.deserialize_stocks(self.stocks_db)
@@ -78,12 +83,45 @@ class Model(metaclass=Singleton):
         self.save_stock()
         self.save_users()
 
+    def initialize_error_messages(self):
+        self.error_messages = YamlLoader.deserialize_error_messages(self.error_messages_db)
+
 
 class Transaction:
-    def __init__(self, is_buying: bool):
+    def __init__(self):
         self.user = None
         self.stock = None
-        self.is_buying = is_buying
         self.count = 0
         self.price = 0
         self.error_msg = ""
+
+    def finalize_transaction(self, stocks: Stocks, amount: int):
+        stocks.add(Stock(agency=self.stock.agency,
+                         price=self.stock.price,
+                         count=self.count))
+        self.user.amount += amount
+        self.error_msg = "success!!!!"
+
+    def execute(self):
+        pass
+
+class BuyTransaction(Transaction):
+    def __init__(self):
+        super().__init__()
+
+    def execute(self):
+        if not Model().stocks.remove(self.stock.agency, self.count):
+            self.error_msg = "stock BAD"
+            return
+        self.finalize_transaction(self.user.stocks, -(self.stock.price * self.count))
+
+
+class SellTransaction(Transaction):
+    def __init__(self):
+        super().__init__()
+
+    def execute(self):
+        if not self.user.stocks.remove(self.stock.agency, self.count):
+            self.error_msg = "stock BAD"
+            return
+        self.finalize_transaction(Model().stocks, self.stock.price * self.count)

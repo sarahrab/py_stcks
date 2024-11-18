@@ -1,5 +1,10 @@
+from abc import abstractmethod
+from typing import TypeVar, Generic
+
+T = TypeVar("T")
+
 class MenuAction:
-    def __init__(self, data: object | None = None):
+    def __init__(self, data: T | None):
         self.data = data
         self.result = None
 
@@ -8,15 +13,15 @@ class MenuAction:
 
 
 class MenuItem:
-    def __init__(self, id: str, text: str, action: MenuAction):
-        self.id = id
+    def __init__(self, text: str, action: MenuAction):
+        self.id = -1
         self.text = text
         self.action = action
 
     def show(self):
         print(f"{self.id}: {self.text}")
 
-    def execute(self, data: object | None = None):
+    def execute(self, data: T | None = None):
         self.action.data = data
         self.action.execute()
 
@@ -28,6 +33,7 @@ class Menu:
 
     def add_item(self, item: MenuItem):
         self.items.append(item)
+        item.id = f"{len(self.items)}"
 
     def get_item(self, id: str) -> MenuItem | None:
         for item in self.items:
@@ -35,11 +41,11 @@ class Menu:
                 return item
         return None
 
-    def show(self, data: object | None = None):
+    def show(self, data: T | None = None):
         for item in self.items:
             item.show()
 
-    def run(self, data: object | None = None):
+    def run(self, data: T | None = None):
         self.show(data)
         item = None
         while item is None:
@@ -53,10 +59,28 @@ class Menu:
 
 
 class View:
-    def __init__(self, name, menu: Menu = None):
-        self.name = name
+    subclasses = []
+
+    def __init__(self, menu: Menu = None, data: T | None = None):
         self.menu = menu
-        self.data = None
+        self.data = data
+
+    @classmethod
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        cls.subclasses.append(cls)
+
+    def __new__(cls, name: str):
+        for subclass in cls.subclasses:
+            if subclass.get_name(name) == name:
+                return object.__new__(subclass)
+        else:
+            return object.__new__(cls)  # Default is this base class.
+
+    @abstractmethod
+    def get_name(self) -> str:
+        pass
+
 
     def show(self):
         pass
@@ -66,5 +90,6 @@ class View:
         if self.menu is not None:
             self.menu.run(self.data)
 
+    @abstractmethod
     def create_menu(self):
         pass

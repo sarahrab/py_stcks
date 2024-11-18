@@ -1,4 +1,4 @@
-from ViewManager import Transaction
+from ViewManager import Transaction, BuyTransaction
 from actions import SwitchViewAction, SwitchBackAction
 from basics import *
 from users import *
@@ -8,19 +8,23 @@ from utils import Utils
 
 
 class StockCountView(View):
-    def __init__(self, title, menu: Menu = None):
-        super().__init__(title, menu)
+    def get_name(self) -> str:
+        return "sc"
+
+    def __init__(self, menu: Menu = None):
+        super().__init__(menu)
 
     def show(self):
         self.create_menu()
-        transaction = cast(Transaction, self.data)
+        transaction = self.data
         if transaction and transaction.user:
             print(f"{transaction.user.name} total amount: {transaction.user.amount}")
-            text = "buying" if transaction.is_buying else "selling"
+            is_buying = True if type(self.data) is BuyTransaction else False
+            text = "buying" if is_buying else "selling"
             print(f"{text} : {transaction.stock.agency} for {transaction.stock.price}")
             valid = False
             count = 0
-            if transaction.is_buying:
+            if is_buying:
                 amount = 0
                 while not valid:
                     # amount = self.get_int("input money sum : ")
@@ -58,6 +62,6 @@ class StockCountView(View):
 
     def create_menu(self):
         self.menu = Menu("sc")
-        self.menu.add_item(MenuItem("1", "Submit", SwitchViewAction("trans")))
-        self.menu.add_item(MenuItem("2", "Cancel", SwitchBackAction()))
+        self.menu.add_item(MenuItem("Submit", SwitchViewAction("trans")))
+        self.menu.add_item(MenuItem("Cancel", SwitchBackAction()))
 

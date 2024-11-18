@@ -9,18 +9,20 @@ from users import *
 
 
 class MainUserView(View):
-    def __init__(self, title, menu: Menu = None):
-        super().__init__(title, menu)
+    def get_name(self) -> str:
+        return "user_main"
+
+    def __init__(self, menu: Menu = None):
+        super().__init__(menu)
 
     def show(self):
         self.create_menu()
 
         user = None
         if type(self.data) == UserAccount:
-            user = cast(UserAccount, self.data)
+            user = self.data
         else:
-            t = cast(Transaction, self.data)
-            user = t.user
+            user = self.data.user
 
         if user is not None:
             print(f"Hello again, {user.name}!")
@@ -29,10 +31,10 @@ class MainUserView(View):
 
     def create_menu(self):
         self.menu = Menu("u")
-        self.menu.add_item(MenuItem("1", "Check Funds", SwitchViewAction("user_funds")))
-        self.menu.add_item(MenuItem("2", "Check Stock", SwitchViewAction("user_stocks")))
-        self.menu.add_item(MenuItem("3", "Buy", StartTransactionAction("buy", True)))
-        self.menu.add_item(MenuItem("4", "Sell", StartTransactionAction("sell", False)))
-        self.menu.add_item(MenuItem("5", "Logout", LogoutAction("welcome")))
-        self.menu.add_item(MenuItem("6", "Delete Account", SwitchViewAction("delete")))
+        self.menu.add_item(MenuItem("Check Funds", SwitchViewAction("user_funds")))
+        self.menu.add_item(MenuItem("Check Stock", SwitchViewAction("user_stocks")))
+        self.menu.add_item(MenuItem("Buy", StartTransactionAction("buy", True)))
+        self.menu.add_item(MenuItem("Sell", StartTransactionAction("sell", False)))
+        self.menu.add_item(MenuItem("Logout", LogoutAction("welcome")))
+        self.menu.add_item(MenuItem("Delete Account", SwitchViewAction("delete")))
 
