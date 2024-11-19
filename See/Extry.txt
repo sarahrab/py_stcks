@@ -1,0 +1,33 @@
+Constants file the just file like this (constants.py):
+DB_HOST = "localhost"
+DB_PORT = 5432
+API_KEY = "your-api-key-here"
+
+Just import and use
+
+
+Also you can use Enums:
+from enum import Enum
+
+
+# Enum for Math Constants
+class MathConstants(Enum):
+    PI = 3.14159
+    E = 2.71828
+
+
+# Enum for App Configuration Constants with functions
+class AppConfig(Enum):
+    MAX_SIZE = 100
+    MIN_SIZE = 10
+
+Exceptions:
+class MyErrorException(Exception):
+    ... # build error message
+    pass
+
+In code:
+get error message
+raise MyErrorException(error_message)
+
+many types of exceptions 
