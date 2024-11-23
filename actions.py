@@ -1,11 +1,19 @@
+import logging
 import os
 
+#import logger
 from basics import MenuAction
 from ViewManager import ViewManager, Model, Transaction, BuyTransaction, SellTransaction
+from exceptions.AttemptsException import AttemptsException
+from exceptions.StockMarketException import StockMarketException
+from exceptions.ValidationException import ValidationException
+from logger import StocksAppLogger
 
 from stocks import Stock, Stocks
 from users import UserAccount, User
 from typing import TypeVar
+
+from validation import TransactionValidation
 
 T = TypeVar("T")
 
@@ -42,29 +50,32 @@ class LoginAction(MenuAction):
         self.view_name = view_name
 
     def execute(self):
+        StocksAppLogger.debug(f"{__class__.__name__}: Start logging-in...")
         if self.data is None:
             print("Invalid user data")
             ViewManager.switch_view("login", self.result)
 
         self.result = None
-        # find = cast(User, self.data)
-        # if find is not None:
-
-        user = Model().users.find(self.data.name, self.data.password)
-        if user is not None:
-            user.logged_in = True
-            self.result = user
-            # YamlLoader.serialize_users(Model().users, Model().users_db)
+        try:
+            self.login_user()
             Model().save_users()
             ViewManager.switch_view(self.view_name, self.result)
-        else:
-            # print("Unknown user. Please try again.")
-            msg = Model().error_messages.get_error_message("unknown_user")
-            retry = input(msg)
+
+        except StockMarketException as e:
+            retry = input(e.message)
             if retry.lower() == "y":
                 ViewManager.switch_view("login", self.result)
             else:
                 ViewManager.switch_back()
+
+    def login_user(self):
+        user = Model().users.find(self.data.name, self.data.password)
+        if user is not None:
+            user.logged_in = True
+            self.result = user
+        else:
+            raise StockMarketException("unknown_user")
+
 
 
 class RegisterAction(MenuAction):
@@ -149,13 +160,31 @@ class TransactionExecuteAction(MenuAction):
                 ViewManager.switch_back()
 
             # VALIDATE()
-            # if not TransactionValidation.validate_transaction():
-            #     print("Invalid transaction")
+            # if not self.validate_transaction():
             #     ViewManager.switch_back()
 
             transaction.execute()
             self.result = transaction
             ViewManager.switch_view(self.view_name, self.result)
+
+    def validate_transaction(self) -> bool:
+        try:
+            result = TransactionValidation.validate_transaction()
+            return result.result
+
+        except ValidationException as ve:
+            print(f"Validation failed: http_status = {ve.response.status_code}")
+            #ViewManager.switch_back()
+            return False
+
+        except AttemptsException as ae:
+            print("Attempts failed")
+            #ViewManager.switch_back()
+            return False
+
+    # if not TransactionValidation.validate_transaction():
+        #     print("Invalid transaction")
+        #     ViewManager.switch_back()
 
     def check_stock_price(self, transaction: Transaction) -> bool:
         modified = os.path.getmtime(Model().stocks_db)

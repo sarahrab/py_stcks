@@ -3,6 +3,7 @@ from actions import SwitchViewAction, SwitchBackAction
 from basics import *
 
 from Utils.utils import Utils
+from exceptions.StockMarketException import StockMarketException
 
 
 class StockCountView(View):
@@ -11,6 +12,16 @@ class StockCountView(View):
 
     def __init__(self, menu: Menu = None):
         super().__init__(menu)
+
+    def validate_buy(self, amount: int, user_amount: int) -> bool:
+        if amount > user_amount:
+            raise StockMarketException("not_enough_money")
+
+        elif amount <= 0:
+            raise StockMarketException("amount_is_incorrect")
+
+        else:
+            return True
 
     def show(self):
         self.create_menu()
@@ -27,12 +38,12 @@ class StockCountView(View):
                 while not valid:
                     # amount = self.get_int("input money sum : ")
                     amount = Utils.get_int("input money sum : ")
-                    if amount > transaction.user.amount:
-                        print("error: not enough money")
-                    elif amount <= 0:
-                        print("amount is incorrect")
-                    else:
-                        valid = True
+
+                    try:
+                        valid = self.validate_buy(amount, transaction.user.amount)
+                    except StockMarketException as ex:
+                        print(ex.message)
+
                 count = int(amount / transaction.stock.price)
                 print(f"{text} : {count} {transaction.stock.agency} for {count * transaction.stock.price}")
             else:

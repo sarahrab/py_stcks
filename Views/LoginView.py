@@ -13,6 +13,7 @@ class LoginView(View):
 
     def show(self):
         self.create_menu()
+
         username = input("Enter your username:")
         password = input("Enter your password:")
         if username != '' and password != '':

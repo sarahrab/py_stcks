@@ -2,7 +2,7 @@ import os
 
 from Utils.YamlLoader import YamlLoader
 from basics import View
-from typing import cast
+from typing import cast, List
 
 from Utils.singleton import Singleton
 from stocks import Stocks, Stock
