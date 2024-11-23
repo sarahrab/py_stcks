@@ -46,6 +46,16 @@ def test_login(user, expected):
         assert res == expected
 
 
+@pytest.mark.parametrize("user, expected", [
+    (UserAccount(name="ty", password="hhh", amount=0), False),
+    (UserAccount(name="yy", password="hhj", amount=0), True)
+])
+def test_register(user, expected):
+    action = actions.RegisterAction("r", user)
+    assert expected == action.register(user)
+
+
+
 
 # @pytest.mark.parametrize("input_number, expected_output", [
 #     (2, True),

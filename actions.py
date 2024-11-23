@@ -87,19 +87,37 @@ class RegisterAction(MenuAction):
         self.result = False
         if self.data is not None:
             reg_user = self.data
-            u = Model().users.find(self.data.name)
-            if u is not None:
+            if self.register(reg_user):
+                Model().save_users()
+                ViewManager.switch_view(self.view_name, self.result)
+            else:
                 msg = Model().error_messages.get_error_message("user_exists")
                 print(msg.replace("{user_name}", reg_user.name))
                 ViewManager.switch_back()
 
-            user = Model().users.add(reg_user.name, reg_user.password, reg_user.amount)
-            user.logged_in = True
-            self.result = user
-            # YamlLoader.serialize_users(Model().users, Model().users_db)
-            Model().save_users()
-            ViewManager.switch_view(self.view_name, self.result)
+            # reg_user = self.data
+            # u = Model().users.find(self.data.name)
+            # if u is not None:
+            #     msg = Model().error_messages.get_error_message("user_exists")
+            #     print(msg.replace("{user_name}", reg_user.name))
+            #     ViewManager.switch_back()
+            #
+            # user = Model().users.add(reg_user.name, reg_user.password, reg_user.amount)
+            # user.logged_in = True
+            # self.result = user
+            # # YamlLoader.serialize_users(Model().users, Model().users_db)
+            # Model().save_users()
+            # ViewManager.switch_view(self.view_name, self.result)
 
+    def register(self, reg_user: UserAccount) -> bool:
+        u = Model().users.find(reg_user.name)
+        if u is not None:
+            return False
+
+        user = Model().users.add(reg_user.name, reg_user.password, reg_user.amount)
+        user.logged_in = True
+        self.result = user
+        return True
 
 class LogoutAction(MenuAction):
     def __init__(self, view_name, data: UserAccount | None = None):
