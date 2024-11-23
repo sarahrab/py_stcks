@@ -1,0 +1,21 @@
+stocks:
+  Company 1:
+    agency: Company 1
+    count: 25
+    price: 3
+  Company 2:
+    agency: Company 2
+    count: 50
+    price: 6
+  Company 3:
+    agency: Company 3
+    count: 75
+    price: 9
+  Company 4:
+    agency: Company 4
+    count: 100
+    price: 12
+  Company 5:
+    agency: Company 5
+    count: 125
+    price: 15
