@@ -1,0 +1,151 @@
+py_stcks:
+
+API
+	1.	User API
+
+		1.1		Login(name, password) -> user_id | Error
+		1.2		Register(name, password, amount) -> user_id | Error
+		1.3 	Logout(id) -> bool
+		1.4		DeleteUser(id) -> deleted | have to sell
+		1.5		GetUserFunds(id) 
+		1.6 	GetUserStocks(id) -> UserStockData[]
+		1.7		GetHistory(id, [filter]) -> UserHistory
+		1.8		SendBuyRequest(user_id, stock_id, amount, price) 
+		1.9		SendSellRequest(user_id, stock_id, amount, price)
+		1.10	GetAvailableRequests(user_id, buy/sell) -> Request[]	
+		
+		
+	2.	Stocks API
+
+		2.1		AddStock(agency, quantity, price)
+		2.2		UpdatePrice(id, new_price)
+		2.3		Get(id)
+		
+		
+	3.	Notifications (?)
+
+		3.1		TransactionExecuted(Result: sucess, failure, validation )
+		3.2		RequestExpired()
+		3.3		NewStockAvailable(id)
+	
+	
+Models
+
+	4.	UserAccount (DB)
+		- user_id
+		- name
+		- password
+		- level (admin, user, ...)
+		- is_logged-in
+		- current_amount
+		- is_waiting_for_delete
+		
+		
+	5.	Stock (DB)
+		- stock_id
+		- agency
+		- quantity
+		- price
+		
+	6. 	UserStock (DB)
+		- user_id
+		- stock_id
+		- quantity
+		- paid_amount / paid_price
+		- timestamp
+
+		
+	7.	BuyRequest (DB)
+		- request_id
+		- user_id
+		- stock_id
+		- count
+		- price
+		- timestamp
+		
+	8.	SellRequest (DB)
+		- request_id
+		- user_id
+		- stock_id
+		- count
+		- price
+		- timestamp
+	
+	9.	Transaction (DB)
+		- transaction_id
+		- sell_request_id
+		- buy_request_id
+		- status
+		- timestamp
+	
+	10.	UserHistory	
+		- open_requests[]
+		- transactions[]
+		
+	11.	UserFunds
+		- amount
+		- total_stocks
+		
+	12.	UserStockData
+		- stock_id
+		- quantity
+		- amount
+		- current_price
+	
+
+SQL DB
+
+	TBL_USERS
+
+	user_id:		INT, NOT NULL, AUTOINCREMENT, PRIMARY KEY
+	name: 			TEXT, NOT NULL
+	password: 		TEXT, NOT NULL
+	amount:  		INT
+	is_logged_in	BOOL
+	is_deleting:	BOOL
+	level:			INT		-- roles, user_roles, groups
+
+
+	TBL_STOCKS
+
+	stock_id:		INT, NOT NULL, AUTOINCREMENT, PRIMARY KEY
+	agency:			TEXT, NOT NULL
+	price:			INT, NOT NULL
+	amount:			INT, NOT NULL
+
+
+	TBL_USER_STOCKS
+
+	user_id:		INT, NOT NULL, ForeignKey TBL_USERS.user_id
+	stock_id:		INT, NOT NULL, ForeignKey TBL_STOCKS.stock_id
+	quantity:		INT, NOT NULL
+	paid_sum:		INT, NOT NULL
+	timestamp:		DATETIME 		-- when bought
+	
+	
+	TBL_REQUESTS
+	
+	request_id:		INT, NOT NULL, AUTOINCREMENT, PRIMARY KEY
+	request_type:	INT, NOT NULL
+	user_id:		ForeignKey TBL_USERS.user_id
+	stock_id:		INT, NOT NULL, ForeignKey TBL_STOCKS.stock_id
+	quantity:		INT, NOT NULL
+	price:			INT, NOT NULL
+	status:			INT, 			-- Pending, Cancelled, TimedOut, Processed
+	timestamp:		DATETIME		-- when request was created
+	ttl:			INT
+	
+	
+	TBL_TRANSACTIONS
+	
+	sell_request_id
+	buy_request_id
+	timestamp
+	
+	
+	
+	
+	
+
+	
+	
