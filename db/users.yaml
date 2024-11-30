@@ -1,6 +1,6 @@
 users:
 - amount: 590
-  logged_in: true
+  logged_in: false
   name: ty
   password: hhh
   stocks:

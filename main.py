@@ -17,8 +17,10 @@ from Views.MainUserView import MainUserView
 from Views.BuyingView import BuyingView
 from Views.SellingView import SellingView
 from Views.TransactionSummaryView import TransactionSummaryView
+from db_utils import mssql_engine
 from logger import StocksAppLogger
 from validation import TransactionValidation
+from sql_utils.executer import login, logout
 
 
 def init_views():
@@ -69,6 +71,8 @@ if __name__ == '__main__':
     # Model.stocks = YamlLoader.deserialize_stocks(Model.stocks_db)
     # Model.users = YamlLoader.deserialize_users(Model.users_db)
 
+    login = login("ty", "hhh")
+    logout = logout(1)
     load_dotenv()
 
     dir = os.getcwd()

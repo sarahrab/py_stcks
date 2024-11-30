@@ -10,7 +10,7 @@ from exceptions.ValidationException import ValidationException
 from logger import StocksAppLogger
 
 from stocks import Stock, Stocks
-from users import UserAccount, User
+from users import UserAccount
 from typing import TypeVar
 
 from validation import TransactionValidation
@@ -45,7 +45,7 @@ class ExitViewAction(MenuAction):
 
 
 class LoginAction(MenuAction):
-    def __init__(self, view_name, data: User | None = None):
+    def __init__(self, view_name, data: UserAccount | None = None):
         super().__init__(data)
         self.view_name = view_name
 

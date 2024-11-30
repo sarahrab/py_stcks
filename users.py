@@ -4,10 +4,10 @@ from pydantic import BaseModel
 from stocks import Stocks, Stock
 
 
-class User(BaseModel):
-    name: str
-    password: str
-    amount: int
+# class User(BaseModel):
+#     name: str
+#     password: str
+#     amount: int
 
     # def __init__(self, name, password, amount: int = 0):
     #     self.name = name
@@ -15,7 +15,7 @@ class User(BaseModel):
     #     self.amount = amount
 
 
-class UserAccount(User):
+class UserAccount(BaseModel):
     name: str
     password: str
     amount: int
