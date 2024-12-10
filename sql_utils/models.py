@@ -1,9 +1,12 @@
+from datetime import datetime
 from typing import Optional, TypeVar
 
 from pydantic import BaseModel
+from sqlalchemy import DateTime
 from sqlmodel import SQLModel, Field
 
-#T = TypeVar("T")
+
+# T = TypeVar("T")
 
 
 # class StockModel(SQLModel, table=True):
@@ -30,6 +33,26 @@ class UserModel(SQLModel, table=True):
 #     stock_id: int
 #     price: int
 #     quantity: int
+
+class RequestModel(SQLModel, table=True):
+    __tablename__ = "TBL_REQUESTS"
+    request_id: Optional[int] = Field(default=None, primary_key=True)
+    request_type: Optional[bool]
+    user_id: Optional[int] = Field(default=None)
+    stock_id: Optional[int] = Field(default=None)
+    quantity: int | None
+    price: int | None
+    status: int | None
+    timestamp: datetime | None
+    ttl: int | None
+
+
+class TransactionModel(SQLModel, table=True):
+    __tablename__ = "TBL_TRANSACTIONS"
+    transaction_id: Optional[int] = Field(default=None, primary_key=True)
+    buy_request_id: Optional[int] = Field(default=None)
+    sell_request_id: Optional[int] = Field(default=None)
+    timestamp: datetime | None
 
 
 class DBResult(BaseModel):
