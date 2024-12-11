@@ -6,16 +6,20 @@ from sqlalchemy import DateTime
 from sqlmodel import SQLModel, Field
 
 
-# T = TypeVar("T")
+T = TypeVar("T")
 
 
-# class StockModel(SQLModel, table=True):
-#     __tablename__ = "TBL_STOCKS"
-#     stock_id: Optional[int] = Field(default=None, primary_key=True)
-#     agency: str
-#     price: int
-#     quantity: int
-#
+class StockModel(SQLModel, table=True):
+     __tablename__ = "TBL_STOCKS"
+     stock_id: Optional[int] = Field(default=None, primary_key=True)
+     agency: str
+     price: int
+     quantity: int
+
+
+def stock_to_string(stock: StockModel) -> str:
+    return f"{stock.agency}, Price: {stock.price}, Amount: {stock.quantity}, Total: {stock.price * stock.quantity}"
+
 
 class UserModel(SQLModel, table=True):
     __tablename__ = "TBL_USERS"
@@ -25,14 +29,14 @@ class UserModel(SQLModel, table=True):
     amount: int | None
     is_logged_in: bool | None = Field(default=False)
 
+class UserStockModel(SQLModel, table=True):
+     __tablename__ = "TBL_USER_STOCKS"
+     user_stock_id: Optional[int] = Field(default=None, primary_key=True)
+     user_id: int
+     stock_id: int
+     price: int
+     quantity: int
 
-# class UserStockModel(SQLModel, table=True):
-#     __tablename__ = "TBL_USER_STOCKS"
-#     user_stock_id: Optional[int] = Field(default=None, primary_key=True)
-#     user_id: int
-#     stock_id: int
-#     price: int
-#     quantity: int
 
 class RequestModel(SQLModel, table=True):
     __tablename__ = "TBL_REQUESTS"
@@ -56,6 +60,6 @@ class TransactionModel(SQLModel, table=True):
 
 
 class DBResult(BaseModel):
-    payload: object | None = None
+    payload: T | None = None
     error: int = 0
     exception: str = ''

@@ -1,6 +1,8 @@
 from ViewManager import Transaction, Model
 from actions import SelectStockAction, SwitchViewAction, SwitchBackAction
 from basics import *
+from sql_utils.executer import get_stocks
+from sql_utils.models import stock_to_string
 from users import *
 from typing import cast
 
@@ -23,6 +25,12 @@ class BuyingView(View):
         if transaction:
             self.menu = Menu("menu_buy")
             count = 1
+
+            res = get_stocks()
+            if res.error == 0 and res.payload is not None:
+                for stock in res.payload:
+                    self.menu.add_item(MenuItem(stock_to_string(stock), SelectStockAction("sc", stock, transaction)))
+
             for stock in Model().stocks.stocks:
                 self.menu.add_item(MenuItem(stock.to_string(), SelectStockAction("sc", stock, transaction)))
                 count += 1

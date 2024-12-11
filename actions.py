@@ -8,9 +8,10 @@ from exceptions.AttemptsException import AttemptsException
 from exceptions.StockMarketException import StockMarketException
 from exceptions.ValidationException import ValidationException
 from logger import StocksAppLogger
+from sql_utils.executer import login
 
 from stocks import Stock, Stocks
-from users import UserAccount
+from users import UserAccount, user_mapper
 from typing import TypeVar
 
 from validation import TransactionValidation
@@ -76,7 +77,38 @@ class LoginAction(MenuAction):
         else:
             raise StockMarketException("unknown_user")
 
+class LoginAction1(MenuAction):
+    def __init__(self, view_name, data: UserAccount | None = None):
+        super().__init__(data)
+        self.view_name = view_name
 
+    def execute(self):
+        StocksAppLogger.debug(f"{__class__.__name__}: Start logging-in...")
+        if self.data is None:
+            print("Invalid user data")
+            ViewManager.switch_view("login", self.result)
+
+        self.result = None
+        try:
+            result = login(self.data.name, self.data.password)
+            if result.error == 0 and result.payload is not None:
+                u = result.payload
+                self.result = user_mapper(result.payload, [])
+
+                self.result = self.data
+                self.result.user_id = u.user_id
+                self.result.logged_in = True
+                # self.result.level = u.level
+                self.result.amount = u.amount
+                Model().save_users()
+                ViewManager.switch_view(self.view_name, self.result)
+
+        except StockMarketException as e:
+            retry = input(e.message)
+            if retry.lower() == "y":
+                ViewManager.switch_view("login", self.result)
+            else:
+                ViewManager.switch_back()
 
 class RegisterAction(MenuAction):
     def __init__(self, view_name, data: UserAccount | None = None):

@@ -3,7 +3,10 @@ from basics import *
 
 from users import *
 
-
+actions_dict= {
+    "check_funds": SwitchViewAction("user_funds"),
+    "check_stock": SwitchViewAction("user_stocks")
+}
 class MainUserView(View):
     def get_name(self) -> str:
         return "user_main"
@@ -27,10 +30,19 @@ class MainUserView(View):
 
     def create_menu(self):
         self.menu = Menu("u")
+
+        # load user_actions.yaml
+        # foreach user_action_def from yaml:
+        #   get action from actions_dict
+        #   if user_action_def.contain(self.data.level):
+        #       self.menu.add_item(user_action_def.action_caption, action[user_action_def.action_key])
         self.menu.add_item(MenuItem("Check Funds", SwitchViewAction("user_funds")))
         self.menu.add_item(MenuItem("Check Stock", SwitchViewAction("user_stocks")))
         self.menu.add_item(MenuItem("Buy", StartTransactionAction("buy", True)))
         self.menu.add_item(MenuItem("Sell", StartTransactionAction("sell", False)))
         self.menu.add_item(MenuItem("Logout", LogoutAction("welcome")))
         self.menu.add_item(MenuItem("Delete Account", SwitchViewAction("delete")))
+        # if self.data.level == 0:
+            # self.menu.add_item( "Add stock")
+
 

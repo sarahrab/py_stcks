@@ -1,10 +1,10 @@
-import datetime
-
+from datetime import datetime
+from typing import TypeVar
 from pydantic import TypeAdapter
 from sqlmodel import Session, select
 
 from db_utils import mssql_engine
-from sql_utils.models import DBResult, UserModel, RequestModel, TransactionModel
+from sql_utils.models import DBResult, UserModel, RequestModel, TransactionModel, StockModel
 
 
 def login(name: str, password: str) -> DBResult:
@@ -20,7 +20,7 @@ def login(name: str, password: str) -> DBResult:
                 session.add(u)
                 session.commit()
                 session.refresh(u)
-                return DBResult(payload=u.user_id, error=0)
+                return DBResult(payload=u, error=0)
             else:
                 return DBResult(error=1)
 
@@ -159,3 +159,40 @@ def finalize_transaction(tran: TransactionModel) -> DBResult:
         # userstock_seller add stock (find in userStockModel by user_id stock_id each, update if found else insert )
         print("d")
     return DBResult(payload="success", error=0)
+
+
+def get_stocks() -> DBResult:
+    engine = mssql_engine()
+    try:
+        with Session(engine) as session:
+            st = select(StockModel)
+            results = session.exec(st)
+            stocks = results.all()
+            return DBResult(error=0, payload=stocks)
+
+    except Exception as ex:
+        return DBResult(exception="stocks")
+
+
+def get_history(user_id: int, from_date: datetime | None, to_date: datetime | None, request_type: int) -> DBResult:
+    engine = mssql_engine()
+    try:
+        with Session(engine) as session:
+            se = select(RequestModel).where(RequestModel.user_id == user_id)
+            if from_date is not None:
+                se = se.where(RequestModel.timestamp >= from_date)
+            if to_date is not None:
+                se = se.where(RequestModel.timestamp <= to_date)
+            if request_type == 0:   #buy
+                se = se.where(RequestModel.request_type == True)
+            elif request_type == 1: # sell
+                se = se.where(RequestModel.request_type == False)
+
+            res = session.exec(se)
+            if res is not None:
+                return DBResult(error=0, payload=res.all())
+            else:
+                return DBResult(error=1)
+
+    except Exception as ex:
+        return DBResult(exception="history")
