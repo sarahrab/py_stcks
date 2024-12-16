@@ -183,16 +183,42 @@ def get_history(user_id: int, from_date: datetime | None, to_date: datetime | No
                 se = se.where(RequestModel.timestamp >= from_date)
             if to_date is not None:
                 se = se.where(RequestModel.timestamp <= to_date)
-            if request_type == 0:   #buy
-                se = se.where(RequestModel.request_type == True)
-            elif request_type == 1: # sell
-                se = se.where(RequestModel.request_type == False)
+            # if request_type == 0:   #buy
+            #     se = se.where(RequestModel.request_type == True)
+            # elif request_type == 1: # sell
+            #     se = se.where(RequestModel.request_type == False)
 
             res = session.exec(se)
             if res is not None:
-                return DBResult(error=0, payload=res.all())
+                all = res.all()
+                return DBResult(error=0, payload=all)
             else:
                 return DBResult(error=1)
+
+    except Exception as ex:
+        return DBResult(exception="history")
+
+
+# call before creating sell request
+#   if DBResult.payload is None: its ok, he can sell
+#   if DBResult.payload is RequestModel: he can't sell because on {request.timestamp} he sold by {request.price}
+def check_sell_validity(user_id: int, stock_id: int, price: int) -> DBResult:
+    engine = mssql_engine()
+    try:
+        with Session(engine) as session:
+            se = select(RequestModel).where(RequestModel.user_id == user_id)
+            se = se.where(RequestModel.stock_id == stock_id)
+            se = se.where(RequestModel.request_type == 0)
+            se = se.where(RequestModel.status == 2)
+            se = se.order_by(RequestModel.timestamp.desc())
+            req = session.exec(se).one_or_none()
+            now = datetime.now()
+            if req is not None:
+                if req.price < price:
+                    delta = now - req.timestamp
+                    if delta.days < 1:
+                        return DBResult(error=0, payload=req)
+            return DBResult(error=0, payload=None)
 
     except Exception as ex:
         return DBResult(exception="history")

@@ -31,7 +31,7 @@ class UserAccount(BaseModel):
     #     self.stocks = Stocks()
 
 def user_mapper(um: UserModel, us: List[StockModel]) -> UserAccount:
-    u = UserAccount(user_id=um.user_id, name=um.user_name, password=um.password, amount=um.amount)
+    u = UserAccount(user_id=um.user_id, name=um.user_name, password=um.password, amount=um.amount, level=um.level)
     u. logged_in=um.is_logged_in if um.is_logged_in is not None else False
     for s in us:
         u.stocks.add(Stock(agency=s.agency))

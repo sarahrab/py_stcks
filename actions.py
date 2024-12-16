@@ -1,5 +1,6 @@
 import logging
 import os
+from datetime import datetime
 
 #import logger
 from basics import MenuAction
@@ -8,7 +9,7 @@ from exceptions.AttemptsException import AttemptsException
 from exceptions.StockMarketException import StockMarketException
 from exceptions.ValidationException import ValidationException
 from logger import StocksAppLogger
-from sql_utils.executer import login
+from sql_utils.executer import login, get_history
 
 from stocks import Stock, Stocks
 from users import UserAccount, user_mapper
@@ -50,6 +51,8 @@ class LoginAction(MenuAction):
         super().__init__(data)
         self.view_name = view_name
 
+
+
     def execute(self):
         StocksAppLogger.debug(f"{__class__.__name__}: Start logging-in...")
         if self.data is None:
@@ -84,6 +87,7 @@ class LoginAction1(MenuAction):
 
     def execute(self):
         StocksAppLogger.debug(f"{__class__.__name__}: Start logging-in...")
+
         if self.data is None:
             print("Invalid user data")
             ViewManager.switch_view("login", self.result)
