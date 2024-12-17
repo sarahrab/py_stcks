@@ -94,3 +94,5 @@ class View:
     @abstractmethod
     def create_menu(self):
         pass
+
+

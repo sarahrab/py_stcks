@@ -24,6 +24,7 @@ class YamlLoader:
             with open(filename, 'r') as file:
                 stocks_yaml = yaml.safe_load(file)
                 #result = Stocks(**stocks_yaml)
+                result = stocks_yaml
                 result = TypeAdapter(Stocks).validate_python(stocks_yaml)
         except:
             result = None

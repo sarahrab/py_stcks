@@ -1,0 +1,11 @@
+- action_key: check_funds
+  caption: "Check Funds"
+  levels: [
+     0,
+     1
+  ]
+- action_key: add_stock
+  caption: "Add Stock"
+  levels: [
+     1
+  ]

@@ -19,6 +19,7 @@ from Views.SellingView import SellingView
 from Views.TransactionSummaryView import TransactionSummaryView
 from db_utils import mssql_engine
 from logger import StocksAppLogger
+from user_actions import ActionsModel
 from validation import TransactionValidation
 from sql_utils.executer import login, logout
 
@@ -30,43 +31,11 @@ def init_views():
         ViewManager.add_view(V)
 
 
-    # welcomeView = WelcomeView("welcome")
-    # ViewManager.add_view(welcomeView)
-    #
-    # loginView = LoginView("login")
-    # ViewManager.add_view(loginView)
-    #
-    # regUserView = RegisterUserView("regUser")
-    # ViewManager.add_view(regUserView)
-    #
-    # userView = MainUserView("user_main")
-    # ViewManager.add_view(userView)
-    #
-    # userFundsView = UserFundsView("user_funds")
-    # ViewManager.add_view(userFundsView)
-    # userStocksView = UserStocksView("user_stocks")
-    # ViewManager.add_view(userStocksView)
-    #
-    # buyingView = BuyingView("buy")
-    # ViewManager.add_view(buyingView)
-    #
-    # sellingView = SellingView("sell")
-    # ViewManager.add_view(sellingView)
-    #
-    # sc = StockCountView("sc")
-    # ViewManager.add_view(sc)
-    #
-    # trans_view = TransactionSummaryView("trans")
-    # ViewManager.add_view(trans_view)
-    #
-    # result_view = TransactionResultView("result")
-    # ViewManager.add_view(result_view)
-    #
-    # delete_view = DeleteView("delete")
-    # ViewManager.add_view(delete_view)
-
-
 if __name__ == '__main__':
+
+    a = ActionsModel()
+    a.initialize("D:\\python\\py_stcks\\db\\e1.yaml")
+    l = a.get_actions(1)
 
     # Model.stocks = YamlLoader.deserialize_stocks(Model.stocks_db)
     # Model.users = YamlLoader.deserialize_users(Model.users_db)
