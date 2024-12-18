@@ -1,10 +1,11 @@
 from datetime import datetime
 from typing import TypeVar
 from pydantic import TypeAdapter
-from sqlmodel import Session, select
+from sqlmodel import Session, select, desc
 
 from db_utils import mssql_engine
-from sql_utils.models import DBResult, UserModel, RequestModel, TransactionModel, StockModel
+from sql_utils.models import DBResult, UserModel, RequestModel, TransactionModel, StockModel, UserStockModel, \
+    create_user_stock
 
 
 def login(name: str, password: str) -> DBResult:
@@ -92,8 +93,13 @@ def find_match(request: RequestModel) -> RequestModel | None:
         with Session(engine) as session:
             st = select(RequestModel).where(RequestModel.stock_id == request.stock_id).where(
                 RequestModel.request_type != request.request_type).where(
-                RequestModel.quantity == request.quantity).where(RequestModel.price == request.price).where(
-                RequestModel.user_id != request.user_id).where(RequestModel.status == 0)  # open status(pending)
+                RequestModel.quantity == request.quantity).where(
+                RequestModel.user_id != request.user_id).where(RequestModel.status == 0)
+            if request.request_type: #buy
+                st = st.where(RequestModel.price <= request.price).order_by(RequestModel.price)
+            else:
+                st = st.where(RequestModel.price >= request.price).order_by(desc(RequestModel.price))
+
             results = session.exec(st)
             match = results.one_or_none()
             return match
@@ -102,14 +108,24 @@ def find_match(request: RequestModel) -> RequestModel | None:
         return None
 
 
-def exec_transaction(buy_request: RequestModel, sell_request: RequestModel) -> TransactionModel | None:
+def exec_transaction(buy_request: RequestModel, sell_request: RequestModel, price: int) -> TransactionModel | None:
     engine = mssql_engine()
     try:
         with Session(engine) as session:
             transaction = TransactionModel(buy_request_id=buy_request.request_id,
-                                           sell_request_id=sell_request.request_id, timestamp=datetime.datetime)
+                                           sell_request_id=sell_request.request_id, timestamp=datetime.now())
             session.add(transaction)
+
+            buy_request.status = 2
+            buy_request.price = price
+            session.add(buy_request)
+
+            sell_request.status = 2
+            sell_request.price = price
+            session.add(sell_request)
+
             session.commit()
+
             session.refresh(transaction)
             return transaction
 
@@ -125,20 +141,26 @@ def exec_buy(user_id: int, stock_id: int, price: int, quantity: int) -> DBResult
             if buy_request.request_id > 0:
                 sell = find_match(buy_request)
                 if sell is not None:
-                    transaction = exec_transaction(buy_request, sell)
+                    transaction = exec_transaction(buy_request, sell, sell.price)
                     if transaction is not None:
-                        buy_request.status = 2
-                        sell.status = 2  # finished
+                        # buy_request.status = 2
+                        # sell.status = 2  # finished
                         return DBResult(payload=transaction, error=0)
+                elif buy_request.ttl == 0:
+                    buy_request.status = 1  #canceled
+                    session.add(buy_request)
+                    session.commit()
+
+
             return DBResult(payload=buy_request, error=0)
 
     except Exception as ex:
         return DBResult(exception="buyoof")
 
 
-def create_buy(price, quantity, session, stock_id, user_id):
+def create_buy(price, quantity, session, stock_id, user_id, ttl: int):
     buy_request = RequestModel(requedt_type=True, user_id=user_id, stock_id=stock_id, price=price,
-                               quantity=quantity, timestamp=datetime.datetime, ttl=5)
+                               quantity=quantity, timestamp=datetime.now(), ttl=ttl)
     session.add(buy_request)
     session.commit()
     session.refresh(buy_request)
@@ -222,3 +244,27 @@ def check_sell_validity(user_id: int, stock_id: int, price: int) -> DBResult:
 
     except Exception as ex:
         return DBResult(exception="history")
+
+def get_user_stocks(user_id: int) -> DBResult:
+    engine = mssql_engine()
+    try:
+        with Session(engine) as session:
+            st = select(UserStockModel, StockModel).where(UserStockModel.user_id == user_id).join(StockModel)
+            results = session.exec(st)
+            u = results.all()
+            if u is not None and len(u) > 0:
+                stocks = []
+                for n in u:
+                    stocks.append(create_user_stock(n[0], n[1]))
+                return DBResult(error=0, payload=stocks)
+            else:
+                return DBResult(error=7)
+
+    except Exception as ex:
+        return DBResult(exception="get_user_stocks")
+
+
+def get_user(session: Session, user_id: int) -> UserModel | None:
+    st = select(UserModel).where(UserModel.user_id == user_id)
+    results = session.exec(st)
+    return results.one_or_none()

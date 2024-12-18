@@ -38,12 +38,12 @@ class MainUserView(View):
         #   if user_action_def.contain(self.data.level):
         #       self.menu.add_item(user_action_def.action_caption, action[user_action_def.action_key])
 
-        a = ActionsModel()
-        a.initialize("D:\\python\\py_stcks\\db\\e1.yaml")
-        actions = a.get_actions(self.data.level)
-        for act in actions:
-            f = actions_dict[act.action_key]
-            self.menu.add_item(MenuItem(act.action_caption, f))
+        # a = ActionsModel()
+        # a.initialize("D:\\python\\py_stcks\\db\\e1.yaml")
+        # actions = a.get_actions(self.data.level)
+        # for act in actions:
+        #     f = actions_dict[act.action_key]
+        #     self.menu.add_item(MenuItem(act.action_caption, f))
 
         self.menu.add_item(MenuItem("Check Funds", SwitchViewAction("user_funds")))
         self.menu.add_item(MenuItem("Check Stock", SwitchViewAction("user_stocks")))

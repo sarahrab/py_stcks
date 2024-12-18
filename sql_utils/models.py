@@ -1,9 +1,11 @@
 from datetime import datetime
-from typing import Optional, TypeVar
+from typing import Optional, TypeVar, List
 
 from pydantic import BaseModel
 from sqlalchemy import DateTime
 from sqlmodel import SQLModel, Field
+
+from sql_utils.user_stock import UserStock
 
 T = TypeVar("T")
 
@@ -20,6 +22,15 @@ def stock_to_string(stock: StockModel) -> str:
     return f"{stock.agency}, Price: {stock.price}, Amount: {stock.quantity}, Total: {stock.price * stock.quantity}"
 
 
+class UserStockModel(SQLModel, table=True):
+    __tablename__ = "TBL_USER_STOCKS"
+    user_stock_id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="TBL_USERS.user_id")
+    stock_id: int = Field(foreign_key="TBL_STOCKS.stock_id")
+    price: int
+    quantity: int
+
+
 class UserModel(SQLModel, table=True):
     __tablename__ = "TBL_USERS"
     user_id: Optional[int] = Field(default=None, primary_key=True)
@@ -30,13 +41,9 @@ class UserModel(SQLModel, table=True):
     level: Optional[int] = 0
 
 
-class UserStockModel(SQLModel, table=True):
-    __tablename__ = "TBL_USER_STOCKS"
-    user_stock_id: Optional[int] = Field(default=None, primary_key=True)
-    user_id: int
-    stock_id: int
-    price: int
-    quantity: int
+def create_user_stock(usm: UserStockModel, sm: StockModel) -> UserStock:
+    return UserStock(stock_id=usm.stock_id, price=usm.price, quantity=usm.quantity, agency=sm.agency,
+                     current_price=sm.price)
 
 
 class RequestModel(SQLModel, table=True):

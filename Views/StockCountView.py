@@ -33,19 +33,20 @@ class StockCountView(View):
             print(f"{text} : {transaction.stock.agency} for {transaction.stock.price}")
             valid = False
             count = 0
+            price = 0
             if is_buying:
-                amount = 0
                 while not valid:
                     # amount = self.get_int("input money sum : ")
-                    amount = Utils.get_int("input money sum : ")
+                    count = Utils.get_int("input money quantity : ")
+                    price = Utils.get_int("input price : ")
 
                     try:
-                        valid = self.validate_buy(amount, transaction.user.amount)
+                        valid = self.validate_buy(count * price, transaction.user.amount)
                     except StockMarketException as ex:
                         print(ex.message)
 
-                count = int(amount / transaction.stock.price)
-                print(f"{text} : {count} {transaction.stock.agency} for {count * transaction.stock.price}")
+                #count = int(amount / transaction.stock.price)
+                print(f"{text} : {count} {transaction.stock.agency} for {count * price}")
             else:
                 count = 0
                 while not valid:
@@ -59,6 +60,7 @@ class StockCountView(View):
                 amount = int(count * transaction.stock.price)
                 print(f"{text} : {count} {transaction.stock.agency} for {amount}")
             transaction.count = count
+            transaction.price = price
 
     # def get_int(self, element: str) -> int:
     #     value= input(element)

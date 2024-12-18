@@ -19,9 +19,10 @@ from Views.SellingView import SellingView
 from Views.TransactionSummaryView import TransactionSummaryView
 from db_utils import mssql_engine
 from logger import StocksAppLogger
+from sql_utils.models import StockModel
 from user_actions import ActionsModel
 from validation import TransactionValidation
-from sql_utils.executer import login, logout
+from sql_utils.executer import login, logout, get_user_stocks
 
 
 def init_views():
@@ -33,9 +34,15 @@ def init_views():
 
 if __name__ == '__main__':
 
-    a = ActionsModel()
-    a.initialize("D:\\python\\py_stcks\\db\\e1.yaml")
-    l = a.get_actions(1)
+    # a = ActionsModel()
+    # a.initialize("D:\\python\\py_stcks\\db\\e1.yaml")
+    # l = a.get_actions(1)
+
+    f = get_user_stocks(1)
+    if f.payload:
+        for sm in f.payload:
+            print(f"Stock={sm.agency}, quantity={sm.quantity}, paid price={sm.price}, current price ={sm.current_price}, "
+                  f"profit={sm.quantity * sm.current_price - sm.quantity * sm.price}")
 
     # Model.stocks = YamlLoader.deserialize_stocks(Model.stocks_db)
     # Model.users = YamlLoader.deserialize_users(Model.users_db)
