@@ -219,7 +219,26 @@ class TransactionExecuteAction(MenuAction):
 
             transaction.execute()
             self.result = transaction
+
+            self.check_requests()
+
             ViewManager.switch_view(self.view_name, self.result)
+
+    def check_requests(self) -> None:
+        interval = int(os.getenv('CHECK_REQUEST_INTERVAL_HOURS'))
+        last = os.getenv('LAST_REQUEST_CHECK')
+        need_check = False
+        if last == '':
+            need_check = True
+        else:
+            dt = datetime.strptime(last, "%Y-%m-%d %H:%M:%S")
+            need_check = (datetime.now() - dt).seconds > interval * 3600
+
+        if need_check:
+            # update_old_requests()
+            os.putenv('LAST_REQUEST_CHECK', datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+
 
     def validate_transaction(self) -> bool:
         try:

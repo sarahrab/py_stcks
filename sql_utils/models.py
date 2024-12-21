@@ -57,6 +57,7 @@ class RequestModel(SQLModel, table=True):
     status: int | None
     timestamp: datetime | None
     ttl: int | None
+    expiration_date: datetime | None
 
 
 class TransactionModel(SQLModel, table=True):

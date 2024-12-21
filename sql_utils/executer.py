@@ -112,10 +112,6 @@ def exec_transaction(buy_request: RequestModel, sell_request: RequestModel, pric
     engine = mssql_engine()
     try:
         with Session(engine) as session:
-            transaction = TransactionModel(buy_request_id=buy_request.request_id,
-                                           sell_request_id=sell_request.request_id, timestamp=datetime.now())
-            session.add(transaction)
-
             buy_request.status = 2
             buy_request.price = price
             session.add(buy_request)
@@ -123,6 +119,10 @@ def exec_transaction(buy_request: RequestModel, sell_request: RequestModel, pric
             sell_request.status = 2
             sell_request.price = price
             session.add(sell_request)
+
+            transaction = TransactionModel(buy_request_id=buy_request.request_id,
+                                           sell_request_id=sell_request.request_id, timestamp=datetime.now())
+            session.add(transaction)
 
             session.commit()
 
@@ -182,6 +182,48 @@ def finalize_transaction(tran: TransactionModel) -> DBResult:
         print("d")
     return DBResult(payload="success", error=0)
 
+def update_sell_request(session: Session, req_sell: RequestModel, seller: UserModel):
+    stock_sell = find_user_stock(session, req_sell)
+    if stock_sell:
+        new_quantity = stock_sell.quantity - req_sell.quantity
+        if new_quantity > 0:
+            stock_sell.quantity = new_quantity
+            session.add(stock_sell)
+        else:
+            session.delete(stock_sell)
+
+def update_buy_request(session: Session, req_buy: RequestModel, buyer: UserModel):
+    stock_buy = find_user_stock(session, req_buy)
+    if stock_buy and stock_buy.price == req_buy.price:
+        stock_buy.quantity = stock_buy.quantity + req_buy.quantity
+
+    else:
+        stock_buy = UserStockModel(user_id=req_buy.user_id, stock_id=req_buy.stock_id, quantity= req_buy.quantity, price=req_buy.price)
+    session.add(stock_buy)
+
+def update_user_amount(session: Session, user: UserModel, amount: int):
+    user.amount += amount
+    session.add(user)
+
+def save_transaction_amounts(session: Session, req_buy: RequestModel,  req_sell: RequestModel, buyer: UserModel, seller: UserModel):
+    update_sell_request(session, req_sell)
+    update_buy_request(session, req_buy)
+    update_user_amount(session, seller, req_sell.quantity * req_sell.price)
+    update_user_amount(session, buyer, -(req_sell.quantity * req_sell.price))
+    session.commit()
+
+
+def find_user_stock(session: Session, req: RequestModel) -> UserStockModel | None:
+    st = select(UserStockModel).where(UserStockModel.user_id == req.user_id).where(UserStockModel.stock_id == req.stock_id)
+    stock_sell = session.exec(st).one_or_none()
+    return  stock_sell
+
+def check_fus() -> UserStockModel | None:
+    engine = mssql_engine()
+    with Session(engine) as session:
+        st = select(RequestModel).where(RequestModel.request_id == 1)
+        r = session.exec(st).one_or_none()
+        return find_user_stock(session, r)
 
 def get_stocks() -> DBResult:
     engine = mssql_engine()
@@ -268,3 +310,20 @@ def get_user(session: Session, user_id: int) -> UserModel | None:
     st = select(UserModel).where(UserModel.user_id == user_id)
     results = session.exec(st)
     return results.one_or_none()
+
+
+def update_old_requests() -> DBResult:
+    engine = mssql_engine()
+    try:
+        with Session(engine) as session:
+            st = select(RequestModel).where(RequestModel.status == 0).where(RequestModel.expiration_date < datetime())
+            results = session.exec(st).all()
+            if results:
+                for r in results:
+                    r.status = 1
+                    session.add(r)
+                session.commit()
+
+
+    except Exception as ex:
+        return DBResult(exception="update_old_requests")

@@ -22,7 +22,7 @@ from logger import StocksAppLogger
 from sql_utils.models import StockModel
 from user_actions import ActionsModel
 from validation import TransactionValidation
-from sql_utils.executer import login, logout, get_user_stocks
+from sql_utils.executer import login, logout, get_user_stocks, update_old_requests, check_fus
 
 
 def init_views():
@@ -37,6 +37,9 @@ if __name__ == '__main__':
     # a = ActionsModel()
     # a.initialize("D:\\python\\py_stcks\\db\\e1.yaml")
     # l = a.get_actions(1)
+
+#    update_old_requests()
+    us = check_fus()
 
     f = get_user_stocks(1)
     if f.payload:

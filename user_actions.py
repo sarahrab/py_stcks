@@ -9,6 +9,7 @@ class UserAction(BaseModel):
     action_key: str
     action_caption: str
     levels: List[int]
+    levels_str: str
 
 
 class ActionsModel(BaseModel):
@@ -26,7 +27,7 @@ class ActionsModel(BaseModel):
                 for e in result:
                     UA = namedtuple('UserAction', e.keys())
                     action = UA(**e)
-                    self.actions.append(UserAction(action_key=action[0], action_caption=action[1], levels=action[2]))
+                    self.actions.append(UserAction(action_key=action[0], action_caption=action[1], levels_str=action[2]))
 
                 # self.actions = TypeAdapter(List[UserAction]).validate_python(result)
 
@@ -39,6 +40,25 @@ class ActionsModel(BaseModel):
             if action.levels is None or action.levels.count(level) > 0:
                 result.append(action)
         return result
+
+    def is_applicable(self, action: UserAction, level: int) -> bool:
+        if action.levels_str is None or len(action.levels_str) == 0 or action.levels_str.startswith('ALL'):
+            return True
+
+        length = len(action.levels_str)
+        apply = True
+        if action.levels_str.startswith('NOT'):
+            apply = False
+            tail = action.levels_str[4:length - 1]
+        else:
+            tail = action.levels_str[1:length - 1]
+
+        levels = tail.split(',')
+        for l in levels:
+            if l == str(level):
+                return apply
+
+        return not apply
 
 # Yaml wtih List[user_action_def]
 
