@@ -9,7 +9,7 @@ from exceptions.AttemptsException import AttemptsException
 from exceptions.StockMarketException import StockMarketException
 from exceptions.ValidationException import ValidationException
 from logger import StocksAppLogger
-from sql_utils.executer import login, get_history
+from sql_utils.executer import login, get_history, register_user
 
 from stocks import Stock, Stocks
 from users import UserAccount, user_mapper
@@ -146,14 +146,18 @@ class RegisterAction(MenuAction):
             # ViewManager.switch_view(self.view_name, self.result)
 
     def register(self, reg_user: UserAccount) -> bool:
-        u = Model().users.find(reg_user.name)
-        if u is not None:
-            return False
+        # u = Model().users.find(reg_user.name)
+        # if u is not None:
+        #     return False
 
-        user = Model().users.add(reg_user.name, reg_user.password, reg_user.amount)
-        user.logged_in = True
-        self.result = user
-        return True
+        db_result = register_user(reg_user)
+        if db_result is not None:
+            self.result = db_result.payload
+
+        # user = Model().users.add(reg_user.name, reg_user.password, reg_user.amount)
+        # user.logged_in = True
+        # self.result = user
+        return db_result is not None and db_result.payload is not None
 
 class LogoutAction(MenuAction):
     def __init__(self, view_name, data: UserAccount | None = None):

@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Optional
 from pydantic import BaseModel
 
 from sql_utils.models import UserModel, UserStockModel, StockModel
@@ -17,12 +17,12 @@ from stocks import Stocks, Stock
 
 
 class UserAccount(BaseModel):
-    user_id: int
+    user_id: Optional[int] = 0
     name: str
     password: str
     amount: int
     logged_in: bool = False
-    level: int
+    level: Optional[int] = 0
     stocks: Stocks = Stocks()
 
     # def __init__(self, name, password, amount: int = 0):

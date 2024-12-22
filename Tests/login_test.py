@@ -7,6 +7,7 @@ import os
 import sys
 
 from ViewManager import Model
+from sql_utils.executer import delete_user
 
 current_path = os.path.abspath(getsourcefile(lambda: 0))
 current_dir = os.path.dirname(current_path)
@@ -46,13 +47,23 @@ def test_login(user, expected):
         assert res == expected
 
 
+
+
 @pytest.mark.parametrize("user, expected", [
     (UserAccount(name="ty", password="hhh", amount=0), False),
     (UserAccount(name="yy", password="hhj", amount=0), True)
 ])
 def test_register(user, expected):
     action = actions.RegisterAction("r", user)
-    assert expected == action.register(user)
+    try:
+        action_result = action.register(user)
+        if action_result and action.result:
+            delete_user(action.result.user_id)
+        assert expected == action_result
+
+    except StockMarketException as ex:
+        res = action.result is not None
+        assert res == expected
 
 
 
