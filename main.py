@@ -1,4 +1,8 @@
+import atexit
+import configparser
+import json
 import logging
+import pathlib
 
 from basics import View
 from actions import *
@@ -23,6 +27,9 @@ from sql_utils.models import StockModel
 from user_actions import ActionsModel
 from validation import TransactionValidation
 from sql_utils.executer import login, logout, get_user_stocks, update_old_requests, check_fus
+import logging.config
+import logging.handlers
+
 
 
 def init_views():
@@ -30,6 +37,32 @@ def init_views():
     for view in views:
         V = View(view)
         ViewManager.add_view(V)
+
+def setup_logger():
+    path = pathlib.Path("logger.json")
+    with open(path) as f:
+        config = json.load(f)
+    logging.config.dictConfig(config)
+    queue_handler = logging.getHandlerByName("queue_handler")
+    if queue_handler:
+        queue_handler.listener.start()
+        atexit.register(queue_handler.listener.stop)
+
+def read_config():
+    # Create a ConfigParser object
+    config = configparser.ConfigParser()
+
+    # Read the configuration file
+    config.read('config.ini')
+
+    # Access values from the configuration file
+    max_validation_attempts = config.getint('General', 'MAX_VALIDATION_ATTEMPTS')
+    interval = config.getint('General', 'CHECK_REQUEST_INTERVAL_HOURS')
+    # config.has_option()
+    # config.has_section()
+
+    # Return a dictionary with the retrieved values
+
 
 
 if __name__ == '__main__':
