@@ -3,6 +3,7 @@ import configparser
 import json
 import logging
 import pathlib
+from typing import cast
 
 from basics import View
 from actions import *
@@ -43,10 +44,16 @@ def setup_logger():
     with open(path) as f:
         config = json.load(f)
     logging.config.dictConfig(config)
-    queue_handler = logging.getHandlerByName("queue_handler")
-    if queue_handler:
-        queue_handler.listener.start()
-        atexit.register(queue_handler.listener.stop)
+    # root = logging.getLogger()
+    # queue_handler = None
+    # for h in root.handlers:
+    #
+    #     if h.name == "queue_handler":
+    #         queue_handler = cast(queue_handler, logging.handlers.QueueHandler)
+    # # queue_handler = logging.getHandlerByName("queue_handler")
+    # if queue_handler:
+    #     queue_handler.listener.start()
+    #     atexit.register(queue_handler.listener.stop)
 
 def read_config():
     # Create a ConfigParser object
@@ -66,13 +73,15 @@ def read_config():
 
 
 if __name__ == '__main__':
+    read_config()
+    setup_logger()
 
     # a = ActionsModel()
     # a.initialize("D:\\python\\py_stcks\\db\\e1.yaml")
     # l = a.get_actions(1)
 
 #    update_old_requests()
-    us = check_fus()
+    #us = check_fus()
 
     f = get_user_stocks(1)
     if f.payload:
@@ -83,8 +92,8 @@ if __name__ == '__main__':
     # Model.stocks = YamlLoader.deserialize_stocks(Model.stocks_db)
     # Model.users = YamlLoader.deserialize_users(Model.users_db)
 
-    login = login("ty", "hhh")
-    logout = logout(1)
+    # login = login("ty", "hhh")
+    # logout = logout(1)
     load_dotenv()
 
     dir = os.getcwd()

@@ -1,6 +1,7 @@
 users:
 - amount: 590
-  logged_in: false
+  level: 0
+  logged_in: true
   name: ty
   password: hhh
   stocks:
@@ -14,3 +15,4 @@ users:
     - agency: Company 5
       count: 4
       price: 6
+  user_id: 0
