@@ -20,6 +20,7 @@ from validation import TransactionValidation
 T = TypeVar("T")
 
 log = logging.getLogger("my_module")
+errlog = logging.getLogger("error_log")
 
 class SwitchViewAction(MenuAction):
     def __init__(self, name: str, data: T | None = None):
@@ -28,6 +29,7 @@ class SwitchViewAction(MenuAction):
 
     def execute(self):
         log.debug(f"switch to {self.name}")
+        errlog.error("ERROR!!! !!! !!!")
         self.result = ViewManager.switch_view(self.name, self.data)
 
 

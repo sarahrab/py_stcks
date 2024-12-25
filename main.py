@@ -75,6 +75,7 @@ def read_config():
 if __name__ == '__main__':
     read_config()
     setup_logger()
+    # logging.basicConfig(level="INFO")
 
     # a = ActionsModel()
     # a.initialize("D:\\python\\py_stcks\\db\\e1.yaml")

@@ -28,6 +28,10 @@
   "loggers": {
     "my_module": {
       "level": "DEBUG",
+      "handlers": ["file"]
+    },
+    "error_log": {
+      "level": "ERROR",
       "handlers": ["stderr", "file"]
     }
   }
