@@ -22,16 +22,17 @@ class ActionsModel(BaseModel):
     def initialize(self, filename: str):
         try:
             with open(filename, 'r') as file:
-                result = yaml.safe_load(file)
+                #result = yaml.safe_load(file)
+                self.actions = yaml.load(file, Loader=yaml.SafeLoader)
 
-                for e in result:
-                    UA = namedtuple('UserAction', e.keys())
-                    action = UA(**e)
-                    self.actions.append(UserAction(action_key=action[0], action_caption=action[1], levels_str=action[2]))
+                # for e in result:
+                #     UA = namedtuple('UserAction', e.keys())
+                #     action = UA(**e)
+                #     self.actions.append(UserAction(action_key=action[0], action_caption=action[1], levels_str=action[2]))
 
                 # self.actions = TypeAdapter(List[UserAction]).validate_python(result)
 
-        except Exception:
+        except Exception as e:
             self.actions = None
 
     def get_actions(self, level: int) -> List[UserAction]:

@@ -340,3 +340,25 @@ class DeleteAction(MenuAction):
             # YamlLoader.serialize_users(Model().users, Model().users_db)
             Model().save_users()
             ViewManager.switch_view("welcome")
+
+
+class SuperDuperTransaction1:
+    transaction: Transaction | None = None
+    super: int
+    duper: str
+
+    #__init__
+
+# class SuperDuperTransaction2(Transaction):
+#     super: int
+#     duper: str
+#
+#     def __int__(self, agency: str, amount: int, price: int):
+#         super().__init__(agency=agency,...)
+class SuperDuperAction(MenuAction):
+    def __int__(self, view_name: str, data: SuperDuperTransaction1 | None = None):
+        super().__init__(data)
+        self.view_name = view_name
+
+
+

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import TypeVar
 from pydantic import TypeAdapter
 from sqlmodel import Session, select, desc
@@ -90,12 +90,15 @@ def register_user(ua: UserAccount) -> DBResult:
         return DBResult(exception="register")
 
 
-def create_buy_request(user_id: int, stock_id: int, price: int, quantity: int) -> DBResult:
+def create_buy_request(user_id: int, stock_id: int, price: int, quantity: int, ttl: int) -> DBResult:
     engine = mssql_engine()
     try:
         with Session(engine) as session:
+            expiration_date = datetime.now()
+            if ttl > 0:
+                expiration_date = expiration_date + timedelta(days=ttl)
             buy_request = RequestModel(requedt_type=True, user_id=user_id, stock_id=stock_id, price=price,
-                                       quantity=quantity, timestamp=datetime.datetime, ttl=5)
+                                       quantity=quantity, timestamp=datetime, ttl=ttl, expiration_date=expiration_date)
             session.add(buy_request)
             session.commit()
             session.refresh(buy_request)

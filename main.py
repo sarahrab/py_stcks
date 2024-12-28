@@ -77,6 +77,9 @@ if __name__ == '__main__':
     setup_logger()
     # logging.basicConfig(level="INFO")
 
+    am = ActionsModel()
+    am.initialize("db\\e1.yaml")
+
     # a = ActionsModel()
     # a.initialize("D:\\python\\py_stcks\\db\\e1.yaml")
     # l = a.get_actions(1)

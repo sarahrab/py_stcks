@@ -94,6 +94,7 @@ class Transaction:
         self.count = 0
         self.price = 0
         self.error_msg = ""
+        self.ttl = 0
 
     def finalize_transaction(self, stocks: Stocks, amount: int):
         stocks.add(Stock(agency=self.stock.agency,

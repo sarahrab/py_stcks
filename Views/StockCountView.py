@@ -34,13 +34,20 @@ class StockCountView(View):
             valid = False
             count = 0
             price = 0
+            ttl = 0
             if is_buying:
                 while not valid:
                     # amount = self.get_int("input money sum : ")
                     count = Utils.get_int("input money quantity : ")
                     price = Utils.get_int("input price : ")
+                    ttl = Utils.get_int("set transaction time-out (days), 0 for immediate: ")
+                    if ttl < 0:
+                        ttl = 0
+                    elif ttl > 10:   # or any other maximum number of days
+                        ttl = 10
 
                     try:
+                        transaction.ttl = ttl
                         valid = self.validate_buy(count * price, transaction.user.amount)
                     except StockMarketException as ex:
                         print(ex.message)

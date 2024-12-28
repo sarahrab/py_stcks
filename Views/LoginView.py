@@ -17,7 +17,7 @@ class LoginView(View):
     def show(self):
         self.create_menu()
 
-        history = get_history(1, self.create_date(2024, 11, 1), self.create_date(2024, 12, 1), 0)
+        # history = get_history(1, self.create_date(2024, 11, 1), self.create_date(2024, 12, 1), 0)
 
         username = input("Enter your username:")
         password = input("Enter your password:")

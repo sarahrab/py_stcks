@@ -22,6 +22,7 @@ class TransactionSummaryView(View):
             print(f"count: {transaction.count} for {transaction.stock.price} per stock")
             print(f"total transaction price: {transaction.stock.price * transaction.count}")
 
+
     def create_menu(self):
         self.menu = Menu("tr")
         self.menu.add_item(MenuItem("Execute", TransactionExecuteAction("result")))
