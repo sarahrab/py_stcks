@@ -1,0 +1,51 @@
+from typing import Any
+
+import requests as requests
+from pydantic import BaseModel, parse_obj_as, TypeAdapter
+import json
+
+url_root = "http://127.0.0.1:8000/"
+
+def send_request(endpoint: str, data: Any, get_or_post: bool) -> Any:
+    hs = {'Content-Type': 'application/json'}
+    if get_or_post:
+        r = requests.post(f"{url_root}{endpoint}/", json=data.model_dump(), headers=hs)
+        return r.json()
+    else:
+        r = requests.get(f"{url_root}{endpoint}/", headers=hs)
+        return r.json()
+
+class User(BaseModel):
+    name: str | None
+    password: str | None
+
+class UserAccount(BaseModel):
+    user_id: int
+    name: str
+    amount: int
+
+response = requests.get(url_root)
+print(response.json())
+
+user = User(name="ty", password='hhh')
+print(user.model_dump_json())
+
+headers = {'Content-Type': 'application/json'}
+response = requests.post(f"{url_root}login/", json=user.model_dump(), headers=headers)
+print(f"Result: {response.status_code}, json={response.json()}")
+
+rrr = send_request("login", user, True)
+
+# user_dict = json.loads(response.json())
+ua = UserAccount(**response.json())
+#ua = parse_obj_as(UserAccount, response.json())
+#ua = user = TypeAdapter(UserAccount).validate_json(response.text)
+print(f"{ua.name}, {ua.user_id}, {ua.amount}")
+
+
+
+
+
+
+
+
