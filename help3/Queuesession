@@ -1,0 +1,47 @@
+class RequestsCRUD:
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def create(self, data: Request) -> RequestModel: # may be you return Request too
+        if data.request_type:
+            return self.exec_buy(data)
+        else:
+            return self.exec_sell(data)
+
+    async def exec_buy(self, data: Request) -> RequestModel: 
+        model = RequestModel()
+        # find_match
+        # ... got no code for this
+        # ... in the end you have RequestModel with right status and price
+        return model 
+    
+    async def exec_sell(self, data: Request) -> RequestModel:
+        model = RequestModel()
+        # find_match
+        # ....
+        return model
+
+    async def bulk_create(self, data: List[Request]) -> List[RequestModel]:
+        results = []
+        queue = asyncio.Queue()
+        _ = asyncio.create_task(self.bulk_consumer(queue, results))
+        await asyncio.create_task(self.bulk_producer(queue, data))
+
+        await queue.join()
+        return results
+    
+
+    async def bulk_producer(self, queue: asyncio.Queue, requests: List[Request]):
+    # generate work
+        for request in requests:
+            await queue.put(request)
+ 
+    async def bulk_consumer(self, queue: asyncio.Queue, results: List[RequestModel]):
+        # consume work
+        while True:
+            request = await queue.get()
+            if request:
+                model = await self.create(request)
+                if model:
+                    results.append(model)
+            queue.task_done()
