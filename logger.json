@@ -4,7 +4,11 @@
   "formatters": {
     "simple": {
       "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    }
+    },
+    "ecs": {
+            "class": "ecs_logging.StdlibFormatter",
+            "exclude_fields": ["log.original", "labels"]
+        }
   },
   "handlers": {
     "stderr": {
@@ -13,12 +17,11 @@
       "stream": "ext://sys.stderr",
       "level": "ERROR"
     },
-
     "file": {
       "class": "logging.handlers.RotatingFileHandler",
       "level": "DEBUG",
-      "formatter": "simple",
-      "filename": "stocks1.log",
+      "formatter": "ecs",
+      "filename": "logs/stocks_1.log",
       "maxBytes": 10000,
       "backupCount": 3,
       "encoding": "utf8"
