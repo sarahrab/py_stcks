@@ -1,0 +1,35 @@
+async def periodic_task(interval: int):
+    try:
+        while True:
+            print("Task is running...")
+            # Your task logic goes here
+            await asyncio.sleep(interval)  # Sleep asynchronously for `interval` seconds
+    except asyncio.CancelledError:
+        print("Periodic task has been cancelled.")
+        raise
+
+# Background task handler, change to five minutes
+async def run_background_tasks():
+    task_interval = 10  # Task will run every 10 seconds
+    task = asyncio.create_task(periodic_task(task_interval))  # Start the periodic task
+
+    try:
+        await asyncio.Future()  # Keep the event loop running indefinitely
+    except asyncio.CancelledError:
+        task.cancel()  # Cancel the periodic task gracefully
+        await task  # Ensure proper cleanup
+        raise
+
+# Run the periodic task on application startup
+@app.on_event("startup")
+async def startup_event():
+    asyncio.create_task(run_background_tasks())
+
+# Handle application shutdown gracefully
+@app.on_event("shutdown")
+async def shutdown_event():
+    print("Application is shutting down...")
+
+if __name__ == '__main__':
+    # asyncio.run(start_background_tasks())
+    uvicorn.run("main:app", port=8000, host="127.0.0.1", reload=True)
