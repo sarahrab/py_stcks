@@ -1,0 +1,7 @@
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    asyncio.create_task(run_background_tasks())  #@app.on_event("startup")
+    yield
+    print("Application is shutting down...")            #@app.on_event("shutdown")
+    
+app = FastAPI(lifespan=lifespan)                         #instead of app=FastAPI()
