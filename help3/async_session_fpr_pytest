@@ -1,0 +1,30 @@
+@pytest_asyncio.fixture
+async def async_session():
+    async_engine=create_async_engine('postgresql+asyncpg://localhost:5432/db')
+    async_session = sessionmaker(
+        expire_on_commit=False,
+        autocommit=False,
+        autoflush=False,
+        bind=async_engine,
+        class_=AsyncSession,
+    )
+
+    async with async_session() as session:
+        await session.begin()
+        yield session
+        await session.rollback()
+
+@pytest.mark.asyncio
+async def test_get_total_count_async(async_session):
+    # Prepare the paginator
+    paginator = Paginator(
+        conn=session,
+        query="SELECT * FROM test_table",
+        batch_size=2
+    )
+
+    # Perform the total count query asynchronously
+    total_count = await paginator._get_total_count_async()
+
+    # Assertion to verify the result
+    assert total_count == 0
