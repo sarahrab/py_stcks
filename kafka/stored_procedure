@@ -1,0 +1,14 @@
+def call_stored_procedure_with_params(t_id: int):
+    engine = mssql_engine()
+    try:
+        with Session(engine) as session:
+            with session.connection() as conn:
+                result = conn.execute(text("EXEC sara_try.dbo.stp_GetTransactionData @transaction_id = :transaction_id"),
+                                      {"transaction_id": t_id})
+                user = result.fetchone()  # Fetch a single row
+                print(user)
+
+    except Exception as ex:
+        return None
+
+call_stored_procedure_with_params(1)
