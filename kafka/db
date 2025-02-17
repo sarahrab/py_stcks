@@ -1,0 +1,17 @@
+CREATE PROCEDURE stp_GetTransactionData 
+(
+	@transaction_id BIGINT
+)
+AS
+BEGIN
+
+	SELECT r_sell.quantity, r_sell.price, s.agency, seller.user_name as seller, buyer.user_name as buyer
+	FROM TBL_TRANSACTIONS t
+	INNER JOIN TBL_REQUESTS r_sell on r_sell.request_id = t.sell_request_id
+	INNER JOIN TBL_REQUESTS r_buy on r_buy.request_id = t.buy_request_id
+	LEFT JOIN TBL_STOCKS s on s.stock_id = r_sell.stock_id
+	LEFT JOIN TBL_USERS seller on seller.user_id = r_sell.user_id
+	LEFT JOIN TBL_USERS  buyer on buyer.user_id = r_buy.user_id
+	where t.transaction_id = @transaction_id
+
+END
