@@ -1,0 +1,135 @@
+To create a **Helm chart** for your project, follow these steps:
+
+---
+
+### **1. Create the Helm Chart**
+Navigate to your project directory and run:
+
+```sh
+helm create my-python-app
+```
+
+This generates a basic Helm chart inside `my-python-app/`.
+
+---
+
+### **2. Define `values.yaml`**
+Modify `my-python-app/values.yaml` to include configurations for your services.
+
+```yaml
+server:
+  image: my-python-app:latest
+  replicas: 1
+  env:
+    DATABASE_URL: "mssql+pymssql://sa:YourStrong!Passw0rd@mssql:1433/yourdb"
+    MSSQL_HOST: "mssql"
+    MSSQL_PORT: "1433"
+    MSSQL_USER: "sa"
+    MSSQL_PASSWORD: "YourStrong!Passw0rd"
+    MSSQL_DB: "yourdb"
+    ELASTICSEARCH_HOST: "elasticsearch"
+    ELASTICSEARCH_PORT: "9200"
+    KAFKA_BROKER: "kafka:9092"
+    LOGSTASH_HOST: "logstash"
+    FILEBEAT_HOST: "filebeat"
+
+mssql:
+  image: mcr.microsoft.com/mssql/server:2022-latest
+  password: "YourStrong!Passw0rd"
+
+elasticsearch:
+  image: docker.elastic.co/elasticsearch/elasticsearch:8.6.2
+
+logstash:
+  image: docker.elastic.co/logstash/logstash:8.6.2
+
+filebeat:
+  image: docker.elastic.co/beats/filebeat:8.6.2
+
+kafka:
+  image: confluentinc/cp-kafka:latest
+```
+
+---
+
+### **3. Define Kubernetes Deployments**
+Modify `my-python-app/templates/deployment.yaml` to define the **server deployment**.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-server
+spec:
+  replicas: {{ .Values.server.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-server
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-server
+    spec:
+      containers:
+        - name: server
+          image: {{ .Values.server.image }}
+          env:
+            - name: DATABASE_URL
+              value: "{{ .Values.server.env.DATABASE_URL }}"
+            - name: ELASTICSEARCH_HOST
+              value: "{{ .Values.server.env.ELASTICSEARCH_HOST }}"
+            - name: KAFKA_BROKER
+              value: "{{ .Values.server.env.KAFKA_BROKER }}"
+          ports:
+            - containerPort: 8000
+```
+
+---
+
+### **4. Define Services**
+Modify `my-python-app/templates/service.yaml` to expose the services.
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-server
+spec:
+  selector:
+    app: {{ .Release.Name }}-server
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-mssql
+spec:
+  selector:
+    app: {{ .Release.Name }}-mssql
+  ports:
+    - protocol: TCP
+      port: 1433
+      targetPort: 1433
+```
+
+---
+
+### **5. Deploy the Helm Chart**
+```sh
+helm install my-python-app ./my-python-app
+```
+
+---
+
+This will deploy:
+✅ **Server App**  
+✅ **MSSQL**  
+✅ **Elasticsearch**  
+✅ **Kafka**  
+✅ **Logstash**  
+✅ **Filebeat**  
+
+Let me know if you need modifications! 🚀

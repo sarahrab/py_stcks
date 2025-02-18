@@ -1,0 +1,182 @@
+To configure Docker for the server part of your Python project, follow these steps:
+
+### 1. **Create a `Dockerfile` for the server**
+Inside your server directory, create a `Dockerfile`:
+
+```dockerfile
+# Use an official Python image as a base
+FROM python:3.11
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the server code and dependencies
+COPY server/ server/
+COPY common/ common/
+
+# Install dependencies
+RUN pip install --no-cache-dir -r server/requirements.txt
+
+# Expose the port your server listens on
+EXPOSE 8000
+
+# Define the command to run the server
+CMD ["python", "server/main.py"]
+```
+
+### 2. **Create a `.dockerignore` file**
+This prevents unnecessary files from being copied to the image.
+
+```
+__pycache__/
+*.pyc
+*.pyo
+.env
+.git
+```
+
+### 3. **Build and Run the Docker Container**
+Run the following commands from the project root:
+
+```sh
+docker build -t my-server -f server/Dockerfile .
+docker run -p 8000:8000 my-server
+```
+
+### 4. **Use Docker Compose (Optional)**
+If your project includes a database or other services, a `docker-compose.yml` can help:
+
+```yaml
+version: '3.8'
+services:
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+    environment:
+      - DATABASE_URL=mongodb://mongodb:27017/mydb
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+```
+
+With MS SQL:
+
+version: '3.8'
+services:
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mssql
+    environment:
+      - DATABASE_URL=mssql+pymssql://sa:YourStrong!Passw0rd@mssql:1433/yourdb
+      - MSSQL_HOST=mssql
+      - MSSQL_PORT=1433
+      - MSSQL_USER=sa
+      - MSSQL_PASSWORD=YourStrong!Passw0rd
+      - MSSQL_DB=yourdb
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+    restart: unless-stopped
+
+
+
+
+With Kafka and Elastic, etc.:
+
+version: '3.8'
+services:
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mssql
+      - elasticsearch
+      - kafka
+      - logstash
+    environment:
+      - DATABASE_URL=mssql+pymssql://sa:YourStrong!Passw0rd@mssql:1433/yourdb
+      - MSSQL_HOST=mssql
+      - MSSQL_PORT=1433
+      - MSSQL_USER=sa
+      - MSSQL_PASSWORD=YourStrong!Passw0rd
+      - MSSQL_DB=yourdb
+      - ELASTICSEARCH_HOST=elasticsearch
+      - ELASTICSEARCH_PORT=9200
+      - KAFKA_BROKER=kafka:9092
+      - LOGSTASH_HOST=logstash
+      - FILEBEAT_HOST=filebeat
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+    restart: unless-stopped
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.2
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.6.2
+    container_name: logstash
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+    environment:
+      - "LS_JAVA_OPTS=-Xms256m -Xmx256m"
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.6.2
+    container_name: filebeat
+    user: root
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    depends_on:
+      - logstash
+    command: ["filebeat", "-e", "-strict.perms=false"]
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_LISTENERS: PLAINTEXT://:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+    ports:
+      - "9092:9092"
