@@ -1,0 +1,42 @@
+{
+    "initial_data": 
+    {
+        "user": 
+        {
+            "user_id": 1,
+            "user_name": "ty",
+            "password": "hhh",
+            "is_logged": null,
+            "is_deleting": null,
+            "amount": 0,
+            "login_updated": null
+        }
+    },
+    "case_create": 
+    {
+        "payload": 
+        {
+            "name": "tyty",
+            "password": "mage",
+            "amount": 100
+        },
+        "want": 
+        {
+            "user_name": "ty",
+            "password": "hhh"
+        }
+    },
+    "case_get": 
+    {
+        "want": 
+        {
+            "user_id": 1,
+            "user_name": "ty",
+            "password": "hhh",
+            "is_logged": null,
+            "is_deleting": null,
+            "amount": 0,
+            "login_updated": null
+        }
+    }
+}
