@@ -1,0 +1,44 @@
+import asyncio
+import threading
+from aiokafka import AIOKafkaConsumer
+
+KAFKA_BOOTSTRAP_SERVERS = "localhost:9092"
+KAFKA_TOPIC = "your-topic"
+
+async def consume():
+    """Asynchronous Kafka consumer."""
+    loop = asyncio.get_event_loop()
+    consumer = AIOKafkaConsumer(
+        KAFKA_TOPIC,
+        loop=loop,
+        bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
+        auto_offset_reset="earliest",
+        enable_auto_commit=True,
+    )
+    await consumer.start()
+    try:
+        async for message in consumer:
+            print(f"\n[Kafka] Received: {message.value.decode()}")
+    finally:
+        await consumer.stop()
+
+def start_consumer_loop():
+    """Runs the asyncio event loop in a separate thread."""
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(consume())
+
+# Start the consumer in a separate thread
+thread = threading.Thread(target=start_consumer_loop, daemon=True)
+thread.start()
+
+# Main console client loop
+def main_client():
+    while True:
+        choice = input("Enter choice: ")
+        if choice.lower() == "exit":
+            break
+        print(f"You chose: {choice}")
+
+if __name__ == "__main__":
+    main_client()
